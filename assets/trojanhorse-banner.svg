@@ -1,243 +1,242 @@
-<svg width="800" height="240" viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background with subtle pattern -->
+<svg width="1000" height="300" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Gradient backgrounds -->
-    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
-      <stop offset="30%" style="stop-color:#2d1b2d;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#3d1a1a;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    <!-- Main gradient background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
     </linearGradient>
     
-    <linearGradient id="redGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:0.8" />
-      <stop offset="50%" style="stop-color:#ef4444;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.8" />
+    <!-- Title gradient -->
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#ee5a52;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff4757;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#ff3838;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1" />
     </linearGradient>
     
-    <radialGradient id="shieldGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:0.3" />
-      <stop offset="70%" style="stop-color:#f59e0b;stop-opacity:0.1" />
-      <stop offset="100%" style="stop-color:#d97706;stop-opacity:0" />
-    </radialGradient>
+    <!-- Shield gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff8c00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff6347;stop-opacity:1" />
+    </linearGradient>
     
-    <!-- Animated circuit pattern -->
-    <pattern id="circuitPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <rect fill="none" stroke="#333" stroke-width="0.5" width="40" height="40"/>
-      <circle cx="10" cy="10" r="1" fill="#666">
-        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
-      </circle>
-      <circle cx="30" cy="30" r="1" fill="#666">
-        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
-      </circle>
-      <line x1="10" y1="10" x2="30" y2="10" stroke="#444" stroke-width="0.5"/>
-      <line x1="30" y1="10" x2="30" y2="30" stroke="#444" stroke-width="0.5"/>
-    </pattern>
+    <!-- Accent gradient -->
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4aa;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#01a3a4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e86ab;stop-opacity:1" />
+    </linearGradient>
     
-    <!-- Glitch effect -->
-    <filter id="glitch">
-      <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0">
-        <animateTransform attributeName="values" 
-          values="1 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0;
-                  1 0 0 0 0.05  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0;
-                  1 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" 
-          dur="0.1s" 
-          repeatCount="indefinite"/>
-      </feColorMatrix>
-    </filter>
-    
-    <!-- Shadow filters -->
-    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.5)"/>
-    </filter>
-    
-    <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
       <feMerge> 
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    
+    <!-- Drop shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.4)"/>
+    </filter>
+    
+    <!-- Circuit pattern -->
+    <pattern id="circuit" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <rect width="60" height="60" fill="none"/>
+      <circle cx="15" cy="15" r="1.5" fill="rgba(0,212,170,0.2)"/>
+      <circle cx="45" cy="45" r="1.5" fill="rgba(0,212,170,0.2)"/>
+      <line x1="15" y1="15" x2="45" y2="15" stroke="rgba(0,212,170,0.1)" stroke-width="0.8"/>
+      <line x1="45" y1="15" x2="45" y2="45" stroke="rgba(0,212,170,0.1)" stroke-width="0.8"/>
+    </pattern>
   </defs>
   
-  <!-- Main background -->
-  <rect width="800" height="240" fill="url(#mainGradient)"/>
+  <!-- Background -->
+  <rect width="1000" height="300" fill="url(#bg)"/>
   
-  <!-- Circuit pattern overlay -->
-  <rect width="800" height="240" fill="url(#circuitPattern)" opacity="0.1"/>
+  <!-- Circuit overlay -->
+  <rect width="1000" height="300" fill="url(#circuit)" opacity="0.3"/>
   
-  <!-- Border frame -->
-  <rect x="2" y="2" width="796" height="236" fill="none" stroke="url(#redGlow)" stroke-width="2" rx="8"/>
+  <!-- Border -->
+  <rect x="2" y="2" width="996" height="296" fill="none" stroke="url(#accent)" stroke-width="3" rx="12"/>
   
-  <!-- Left side: Trojan Horse Shield Icon -->
-  <g transform="translate(60, 120)">
-    <!-- Shield background glow -->
-    <circle cx="0" cy="0" r="45" fill="url(#shieldGlow)"/>
+  <!-- Left Shield Icon -->
+  <g transform="translate(120, 150)">
+    <!-- Shield glow -->
+    <circle cx="0" cy="0" r="55" fill="rgba(255,215,0,0.1)"/>
     
     <!-- Main shield -->
-    <path d="M-25,-35 L25,-35 Q30,-30 30,-20 L30,20 Q30,35 0,40 Q-30,35 -30,20 L-30,-20 Q-30,-30 -25,-35 Z" 
-          fill="#1f2937" stroke="#dc2626" stroke-width="2" filter="url(#dropShadow)"/>
+    <path d="M-30,-40 L30,-40 Q40,-30 40,-15 L40,25 Q40,45 0,50 Q-40,45 -40,25 L-40,-15 Q-40,-30 -30,-40 Z" 
+          fill="rgba(15,15,35,0.9)" stroke="url(#shieldGrad)" stroke-width="3" filter="url(#shadow)"/>
     
-    <!-- Inner shield design -->
-    <path d="M-20,-25 L20,-25 Q23,-22 23,-15 L23,15 Q23,25 0,30 Q-23,25 -23,15 L-23,-15 Q-23,-22 -20,-25 Z" 
-          fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.8"/>
+    <!-- Inner shield -->
+    <path d="M-25,-30 L25,-30 Q32,-23 32,-12 L32,20 Q32,35 0,40 Q-32,35 -32,20 L-32,-12 Q-32,-23 -25,-30 Z" 
+          fill="none" stroke="rgba(255,215,0,0.4)" stroke-width="2"/>
     
-    <!-- Trojan horse silhouette -->
-    <g transform="scale(0.8)">
+    <!-- Horse silhouette -->
+    <g transform="scale(1.2)" fill="url(#shieldGrad)">
       <!-- Horse head -->
-      <path d="M-8,-10 Q-12,-15 -8,-20 Q-5,-22 0,-20 Q5,-22 8,-20 Q12,-15 8,-10 L8,-5 Q8,0 5,3 L-5,3 Q-8,0 -8,-5 Z" 
-            fill="#dc2626"/>
+      <path d="M-6,-12 Q-10,-18 -6,-23 Q-3,-25 0,-23 Q3,-25 6,-23 Q10,-18 6,-12 L6,-7 Q6,-2 3,1 L-3,1 Q-6,-2 -6,-7 Z"/>
       <!-- Horse body -->
-      <rect x="-10" y="0" width="20" height="15" fill="#dc2626"/>
+      <rect x="-8" y="-2" width="16" height="12" rx="2"/>
       <!-- Legs -->
-      <rect x="-8" y="12" width="3" height="8" fill="#dc2626"/>
-      <rect x="-2" y="12" width="3" height="8" fill="#dc2626"/>
-      <rect x="2" y="12" width="3" height="8" fill="#dc2626"/>
-      <rect x="8" y="12" width="3" height="8" fill="#dc2626"/>
-      
-      <!-- Horse details -->
-      <circle cx="-3" cy="-12" r="1" fill="#ffffff"/>
-      <circle cx="3" cy="-12" r="1" fill="#ffffff"/>
-      <path d="M-2,-8 L2,-8" stroke="#ffffff" stroke-width="1"/>
+      <rect x="-6" y="8" width="2.5" height="8" rx="1"/>
+      <rect x="-1.5" y="8" width="2.5" height="8" rx="1"/>
+      <rect x="1.5" y="8" width="2.5" height="8" rx="1"/>
+      <rect x="6" y="8" width="2.5" height="8" rx="1"/>
+      <!-- Eyes -->
+      <circle cx="-2" cy="-15" r="1" fill="#ffffff"/>
+      <circle cx="2" cy="-15" r="1" fill="#ffffff"/>
     </g>
-    
-    <!-- Animated scan lines -->
-    <line x1="-30" y1="-20" x2="30" y2="-20" stroke="#00ff41" stroke-width="1" opacity="0.7">
-      <animateTransform attributeName="transform" type="translate" 
-        values="0,0; 0,40; 0,0" dur="2s" repeatCount="indefinite"/>
-    </line>
-    <line x1="-30" y1="-15" x2="30" y2="-15" stroke="#00ff41" stroke-width="0.5" opacity="0.5">
-      <animateTransform attributeName="transform" type="translate" 
-        values="0,5; 0,45; 0,5" dur="2s" repeatCount="indefinite"/>
-    </line>
   </g>
   
-  <!-- Center: Main Title -->
-  <g transform="translate(400, 90)">
-    <!-- Main title shadow -->
-    <text x="0" y="0" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" 
-          fill="#000000" opacity="0.3" transform="translate(3,3)">TrojanHorse.js</text>
+  <!-- Main Title -->
+  <g transform="translate(500, 120)">
+    <!-- Title shadow -->
+    <text x="0" y="0" text-anchor="middle" 
+          font-family="'Segoe UI', 'Arial Black', sans-serif" 
+          font-size="64" font-weight="900" 
+          fill="rgba(0,0,0,0.3)" 
+          transform="translate(2,4)">TrojanHorse.js</text>
     
     <!-- Main title -->
-    <text x="0" y="0" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" 
-          fill="url(#redGlow)" filter="url(#textGlow)">TrojanHorse.js</text>
-    
+    <text x="0" y="0" text-anchor="middle" 
+          font-family="'Segoe UI', 'Arial Black', sans-serif" 
+          font-size="64" font-weight="900" 
+          fill="url(#titleGradient)" 
+          filter="url(#glow)">TrojanHorse.js</text>
+          
     <!-- Subtitle -->
-    <text x="0" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600" 
-          fill="#e5e7eb" opacity="0.9">The only Trojan you actually want in your system</text>
+    <text x="0" y="40" text-anchor="middle" 
+          font-family="'Segoe UI', Arial, sans-serif" 
+          font-size="20" font-weight="400" 
+          fill="#e1e8ed" opacity="0.9" 
+          letter-spacing="1px">The only Trojan you actually want in your system</text>
+  </g>
+  
+  <!-- Feature Tags -->
+  <g transform="translate(500, 200)">
+    <!-- Tag 1: THREAT INTEL -->
+    <g transform="translate(-140, 0)">
+      <rect x="-60" y="-12" width="120" height="24" 
+            fill="rgba(255,215,0,0.12)" 
+            stroke="rgba(255,215,0,0.3)" 
+            stroke-width="1" rx="12"/>
+      <text x="-40" y="2" text-anchor="middle" font-size="12" fill="#ffd700">⚡</text>
+      <text x="10" y="4" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="600" fill="#ffd700">THREAT INTEL</text>
+    </g>
     
-    <!-- Feature tags -->
-    <g transform="translate(0, 55)">
-      <!-- Tag background -->
-      <rect x="-140" y="-8" width="280" height="20" fill="rgba(239, 68, 68, 0.1)" stroke="rgba(239, 68, 68, 0.3)" stroke-width="1" rx="10"/>
-      
-      <text x="-120" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="500" fill="#fbbf24">⚡ THREAT INTELLIGENCE</text>
-      <text x="-20" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="500" fill="#10b981">🛡️ SECURITY-FIRST</text>
-      <text x="80" y="5" font-family="Arial, sans-serif" font-size="12" font-weight="500" fill="#3b82f6">🚀 PRODUCTION-READY</text>
+    <!-- Tag 2: SECURITY-FIRST -->
+    <g transform="translate(0, 0)">
+      <rect x="-75" y="-12" width="150" height="24" 
+            fill="rgba(0,212,170,0.12)" 
+            stroke="rgba(0,212,170,0.3)" 
+            stroke-width="1" rx="12"/>
+      <text x="-50" y="2" text-anchor="middle" font-size="12" fill="#00d4aa">🛡</text>
+      <text x="8" y="4" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="600" fill="#00d4aa">SECURITY-FIRST</text>
+    </g>
+    
+    <!-- Tag 3: PRODUCTION -->
+    <g transform="translate(140, 0)">
+      <rect x="-55" y="-12" width="110" height="24" 
+            fill="rgba(59,130,246,0.12)" 
+            stroke="rgba(59,130,246,0.3)" 
+            stroke-width="1" rx="12"/>
+      <text x="-38" y="2" text-anchor="middle" font-size="12" fill="#3b82f6">🚀</text>
+      <text x="8" y="4" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="600" fill="#3b82f6">PRODUCTION</text>
     </g>
   </g>
   
-  <!-- Right side: Threat Detection Visualization -->
-  <g transform="translate(680, 120)">
-    <!-- Radar circle -->
-    <circle cx="0" cy="0" r="35" fill="none" stroke="#166534" stroke-width="2" opacity="0.6"/>
-    <circle cx="0" cy="0" r="25" fill="none" stroke="#166534" stroke-width="1" opacity="0.4"/>
-    <circle cx="0" cy="0" r="15" fill="none" stroke="#166534" stroke-width="1" opacity="0.3"/>
+  <!-- Right Side - Radar -->
+  <g transform="translate(850, 150)">
+    <!-- Radar rings -->
+    <circle cx="0" cy="0" r="45" fill="none" stroke="rgba(0,212,170,0.3)" stroke-width="2"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="rgba(0,212,170,0.2)" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="15" fill="none" stroke="rgba(0,212,170,0.15)" stroke-width="1"/>
     
     <!-- Radar sweep -->
-    <path d="M0,0 L0,-35 A35,35 0 0,1 24.7,-24.7 Z" fill="rgba(34, 197, 94, 0.2)">
+    <defs>
+      <path id="sweep" d="M0,0 L0,-45 A45,45 0 0,1 31.8,-31.8 Z"/>
+    </defs>
+    <use href="#sweep" fill="rgba(0,212,170,0.15)">
       <animateTransform attributeName="transform" type="rotate" 
-        values="0; 360" dur="4s" repeatCount="indefinite"/>
-    </path>
+        values="0;360" dur="6s" repeatCount="indefinite"/>
+    </use>
     
-    <!-- Threat indicators -->
-    <circle cx="20" cy="-15" r="2" fill="#dc2626">
-      <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+    <!-- Threat dots -->
+    <circle cx="25" cy="-20" r="3" fill="#ff4757" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
     </circle>
-    <circle cx="-10" cy="25" r="2" fill="#dc2626">
-      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+    <circle cx="-15" cy="30" r="3" fill="#ff4757" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite" begin="0.5s"/>
     </circle>
-    <circle cx="-25" cy="-5" r="2" fill="#f59e0b">
-      <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="5" cy="20" r="2" fill="#f59e0b">
-      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite" begin="0.7s"/>
+    <circle cx="-30" cy="-10" r="2.5" fill="#ffd700" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.4;0.8" dur="1.8s" repeatCount="indefinite"/>
     </circle>
     
-    <!-- Data streams -->
-    <g opacity="0.7">
-      <line x1="-50" y1="-30" x2="-35" y2="-25" stroke="#00ff41" stroke-width="1">
-        <animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite"/>
-      </line>
-      <line x1="50" y1="20" x2="35" y2="15" stroke="#00ff41" stroke-width="1">
-        <animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" begin="0.3s"/>
-      </line>
-      <line x1="-30" y1="50" x2="-20" y2="35" stroke="#00ff41" stroke-width="1">
-        <animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" begin="0.6s"/>
-      </line>
-    </g>
-    
-    <!-- Center dot -->
-    <circle cx="0" cy="0" r="3" fill="#22c55e">
-      <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+    <!-- Center -->
+    <circle cx="0" cy="0" r="4" fill="#00d4aa" filter="url(#glow)">
+      <animate attributeName="r" values="4;6;4" dur="3s" repeatCount="indefinite"/>
     </circle>
   </g>
   
-  <!-- Bottom: Tech Stack Icons -->
-  <g transform="translate(400, 200)">
-    <!-- Background bar -->
-    <rect x="-200" y="-15" width="400" height="30" fill="rgba(31, 41, 55, 0.8)" stroke="rgba(239, 68, 68, 0.2)" stroke-width="1" rx="15"/>
+  <!-- Tech Stack -->
+  <g transform="translate(500, 260)">
+    <rect x="-180" y="-12" width="360" height="24" 
+          fill="rgba(15,15,35,0.6)" 
+          stroke="rgba(0,212,170,0.3)" 
+          stroke-width="1" rx="12"/>
     
-    <!-- Tech icons with labels -->
-    <g transform="translate(-150, 0)">
-      <rect x="-12" y="-8" width="24" height="16" fill="#3178c6" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">TS</text>
+    <!-- TypeScript -->
+    <g transform="translate(-120, 0)">
+      <rect x="-10" y="-8" width="20" height="16" fill="#3178c6" rx="3"/>
+      <text x="0" y="3" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#ffffff">TS</text>
     </g>
     
-    <g transform="translate(-100, 0)">
+    <!-- Node.js -->
+    <g transform="translate(-70, 0)">
       <circle cx="0" cy="0" r="8" fill="#68cc40"/>
-      <text x="0" y="3" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#ffffff">⬢</text>
+      <text x="0" y="2" text-anchor="middle" font-size="12" fill="#ffffff">⬢</text>
     </g>
     
-    <g transform="translate(-50, 0)">
-      <rect x="-8" y="-8" width="16" height="16" fill="#2496ed" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">🐳</text>
+    <!-- Docker -->
+    <g transform="translate(-20, 0)">
+      <rect x="-8" y="-8" width="16" height="16" fill="#2496ed" rx="3"/>
+      <text x="0" y="2" text-anchor="middle" font-size="10" fill="#ffffff">🐳</text>
     </g>
     
-    <g transform="translate(0, 0)">
-      <rect x="-8" y="-8" width="16" height="16" fill="#ff6b35" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">🔥</text>
+    <!-- Security -->
+    <g transform="translate(20, 0)">
+      <rect x="-8" y="-8" width="16" height="16" fill="#ff4757" rx="3"/>
+      <text x="0" y="2" text-anchor="middle" font-size="10" fill="#ffffff">🔒</text>
     </g>
     
-    <g transform="translate(50, 0)">
-      <rect x="-8" y="-8" width="16" height="16" fill="#326ce5" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">☸</text>
+    <!-- Kubernetes -->
+    <g transform="translate(70, 0)">
+      <rect x="-8" y="-8" width="16" height="16" fill="#326ce5" rx="3"/>
+      <text x="0" y="2" text-anchor="middle" font-size="10" fill="#ffffff">☸</text>
     </g>
     
-    <g transform="translate(100, 0)">
-      <rect x="-8" y="-8" width="16" height="16" fill="#dc2626" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">🛡️</text>
-    </g>
-    
-    <g transform="translate(150, 0)">
-      <rect x="-8" y="-8" width="16" height="16" fill="#0ea5e9" rx="2"/>
-      <text x="0" y="2" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ffffff">☁</text>
+    <!-- Cloud -->
+    <g transform="translate(120, 0)">
+      <rect x="-8" y="-8" width="16" height="16" fill="#0ea5e9" rx="3"/>
+      <text x="0" y="2" text-anchor="middle" font-size="10" fill="#ffffff">☁</text>
     </g>
   </g>
   
   <!-- Corner accents -->
-  <!-- Top left -->
-  <path d="M0,0 L20,0 L20,2 L2,2 L2,20 L0,20 Z" fill="#dc2626" opacity="0.8"/>
-  <!-- Top right -->
-  <path d="M800,0 L780,0 L780,2 L798,2 L798,20 L800,20 Z" fill="#dc2626" opacity="0.8"/>
-  <!-- Bottom left -->
-  <path d="M0,240 L20,240 L20,238 L2,238 L2,220 L0,220 Z" fill="#dc2626" opacity="0.8"/>
-  <!-- Bottom right -->
-  <path d="M800,240 L780,240 L780,238 L798,238 L798,220 L800,220 Z" fill="#dc2626" opacity="0.8"/>
+  <path d="M0,0 L25,0 L25,3 L3,3 L3,25 L0,25 Z" fill="url(#accent)" opacity="0.8"/>
+  <path d="M1000,0 L975,0 L975,3 L997,3 L997,25 L1000,25 Z" fill="url(#accent)" opacity="0.8"/>
+  <path d="M0,300 L25,300 L25,297 L3,297 L3,275 L0,275 Z" fill="url(#accent)" opacity="0.8"/>
+  <path d="M1000,300 L975,300 L975,297 L997,297 L997,275 L1000,275 Z" fill="url(#accent)" opacity="0.8"/>
   
-  <!-- Subtle scan lines animation -->
-  <rect width="800" height="2" fill="rgba(34, 197, 94, 0.3)" opacity="0.5">
+  <!-- Subtle scan line -->
+  <rect width="1000" height="1" fill="rgba(0,212,170,0.4)">
     <animateTransform attributeName="transform" type="translate" 
-      values="0,-2; 0,240; 0,-2" dur="3s" repeatCount="indefinite"/>
+      values="0,0; 0,300; 0,0" dur="5s" repeatCount="indefinite"/>
   </rect>
 </svg>
