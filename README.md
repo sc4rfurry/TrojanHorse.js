@@ -2,7 +2,11 @@
 
 <div align="center">
 
-![TrojanHorse.js Banner](https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/trojanhorse-banner.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/trojanhorse-banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/trojanhorse-banner.svg">
+  <img alt="TrojanHorse.js - The only Trojan you actually want in your system" src="https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/trojanhorse-banner.svg" width="100%">
+</picture>
 
 **🛡️ The only Trojan you actually want in your system 🛡️**
 
