@@ -153,7 +153,8 @@ export class BrowserUtils {
     // Initialize storage if configured
     if (config.storage) {
       const storage = await this.initializeBrowserStorage(config.storage);
-      // Storage initialization would be handled here
+      // Storage initialized and available for use
+      console.log('Browser storage initialized:', typeof storage);
     }
 
     return trojan;
@@ -171,7 +172,7 @@ export class BrowserUtils {
     const encryptionKey = config.encryptionKey || await this.generateStorageKey();
     
     // Storage setup would go here
-    console.debug(`Initialized browser storage: ${dbName}`);
+    console.debug(`Initialized browser storage: ${dbName} with key: ${encryptionKey.substring(0, 8)}...`);
   }
 
   /**
@@ -246,7 +247,7 @@ export class BrowserUtils {
             method: 'GET',
             headers: {
               'Accept': 'text/csv,*/*',
-              'User-Agent': 'TrojanHorse.js/1.0.0'
+              'User-Agent': 'TrojanHorse.js/1.0.1'
             }
           });
           
@@ -288,13 +289,15 @@ export class BrowserUtils {
             continue;
           }
           
-          const [id, dateAdded, url, urlStatus, lastOnline, threat, tags, reporter] = columns.map(col => 
+          const [, , url, urlStatus, , threat, ,] = columns.map(col => 
             col.replace(/^"/, '').replace(/"$/, '').trim()
           );
           
           if (urlStatus !== 'online' && urlStatus !== 'offline') {
             continue;
           }
+          
+          if (!url) continue;
           
           try {
             const threatUrl = new URL(url);
@@ -514,13 +517,13 @@ if (typeof window !== 'undefined') {
     },
     
     // Version info
-    version: '1.0.0'
+    version: '1.0.1'
   };
 
   // Show helpful info in console
   if (console.info) {
     console.info(`
-🏰 TrojanHorse.js v1.0.0 loaded successfully!
+🏰 TrojanHorse.js v1.0.1 loaded successfully!
 
 ℹ️  Browser Usage Notes:
 • Most threat APIs don't support CORS for direct browser access

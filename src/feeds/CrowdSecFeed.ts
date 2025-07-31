@@ -117,10 +117,10 @@ interface CrowdSecSmokeResponse {
   };
 }
 
-interface CrowdSecError {
-  message: string;
-  errors?: string[];
-}
+// interface CrowdSecError {
+//   message: string;
+//   errors?: string[];
+// }
 
 export class CrowdSecFeed {
   private config: FeedConfiguration;
@@ -186,11 +186,11 @@ export class CrowdSecFeed {
     try {
       const response = await axios.get(`${this.baseUrl}/smoke/`, {
         headers: {
-          'User-Agent': 'TrojanHorse.js/1.0.0',
+          'User-Agent': 'TrojanHorse.js/1.0.1',
           'Accept': 'application/json',
           ...(this.apiKey && { 'x-api-key': this.apiKey })
         },
-        timeout: this.config.timeout
+        timeout: this.config.timeout || 30000
       });
 
       const smokeData: CrowdSecSmokeResponse[] = Array.isArray(response.data) ? response.data : [response.data];
@@ -235,10 +235,10 @@ export class CrowdSecFeed {
         {
           headers: {
             'x-api-key': this.apiKey,
-            'User-Agent': 'TrojanHorse.js/1.0.0',
+            'User-Agent': 'TrojanHorse.js/1.0.1',
             'Accept': 'application/json'
           },
-          timeout: this.config.timeout
+          timeout: this.config.timeout || 30000
         }
       );
 
@@ -277,7 +277,7 @@ export class CrowdSecFeed {
         : `${this.baseUrl}/smoke/${ip}`;
 
       const headers: Record<string, string> = {
-        'User-Agent': 'TrojanHorse.js/1.0.0',
+        'User-Agent': 'TrojanHorse.js/1.0.1',
         'Accept': 'application/json'
       };
 
@@ -287,7 +287,7 @@ export class CrowdSecFeed {
 
       const response: AxiosResponse<CrowdSecSmokeResponse> = await axios.get(url, {
         headers,
-        timeout: this.config.timeout
+        timeout: this.config.timeout || 30000
       });
 
       this.updateRateLimitInfo(response.headers);
@@ -373,7 +373,7 @@ export class CrowdSecFeed {
         totalIndicators: indicators.length,
         hasMore: false,
         requestsProcessed: ips.length,
-        errors: errors.length > 0 ? errors : undefined,
+        errors: errors.length > 0 ? errors : [],
         rateLimit: {
           remaining: this.rateLimitRemaining,
           resetTime: this.rateLimitReset,
@@ -438,7 +438,7 @@ export class CrowdSecFeed {
         }
       },
       description: this.generateDescription(behaviors, attackDetails),
-      malwareFamily: attackDetails.length > 0 ? attackDetails[0].name : undefined
+      malwareFamily: attackDetails.length > 0 ? (attackDetails[0]?.name || 'unknown') : undefined
     };
   }
 

@@ -193,7 +193,7 @@ class TrojanHorseEnterprise extends EventEmitter {
       analytics: !!this.analyticsManager,
       authentication: !!this.authManager,
       uptime: process.uptime(),
-      version: '1.0.0',
+      version: '1.0.1',
       enterprise: true
     };
   }

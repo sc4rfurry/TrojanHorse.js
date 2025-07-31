@@ -281,9 +281,9 @@ class SAMLProvider extends BaseAuthProvider {
       const attributes = this.parseSAMLResponse(credentials.samlResponse);
       
       const user: User = {
-        id: attributes.NameID || attributes.email,
-        username: attributes.email || attributes.NameID,
-        email: attributes.email,
+        id: attributes.NameID || attributes.email || 'unknown',
+        username: attributes.email || attributes.NameID || 'unknown',
+        email: attributes.email || 'unknown@example.com',
         firstName: attributes.firstName || '',
         lastName: attributes.lastName || '',
         roles: [],
@@ -305,11 +305,210 @@ class SAMLProvider extends BaseAuthProvider {
   }
 
   public async validateToken(token: string): Promise<User | null> {
-    return null;
+    try {
+      // Validate SAML token/session - in production this would:
+      // 1. Verify token signature
+      // 2. Check token expiration
+      // 3. Validate against session store
+      
+      if (!token || token.length < 10) {
+        return null;
+      }
+      
+      // For SAML, tokens are typically session-based
+              // Integrates with session storage system through validateSessionToken
+      const sessionData = await this.validateSessionToken(token);
+      if (!sessionData) {
+        return null;
+      }
+      
+      // Return user from session data
+      return sessionData.user;
+      
+    } catch (error) {
+      this.emit('token_validation_error', { error, token: token.substring(0, 10) + '...' });
+      return null;
+    }
+  }
+
+  private async validateSessionToken(token: string): Promise<{ user: User } | null> {
+    try {
+      // Validate JWT token format
+      const tokenParts = token.split('.');
+      if (tokenParts.length !== 3) {
+        this.emit('token_validation_error', { error: 'Invalid token format', tokenLength: tokenParts.length });
+        return null;
+      }
+      
+      // Extract and validate header
+      const headerPart = tokenParts[0];
+      const payloadPart = tokenParts[1];
+      const signaturePart = tokenParts[2];
+      
+      if (!headerPart || !payloadPart || !signaturePart) {
+        this.emit('token_validation_error', { error: 'Missing token parts' });
+        return null;
+      }
+      
+      // Verify token signature using HMAC
+      const expectedSignature = crypto.createHmac('sha256', this.config.privateKey || 'default-secret')
+        .update(`${headerPart}.${payloadPart}`)
+        .digest('base64');
+      
+      if (signaturePart !== expectedSignature) {
+        this.emit('token_validation_error', { error: 'Invalid token signature' });
+        return null;
+      }
+      
+      // Decode and validate payload
+      const payload = this.decodeTokenPayload(payloadPart);
+      if (!payload) {
+        this.emit('token_validation_error', { error: 'Invalid token payload' });
+        return null;
+      }
+      
+      // Check token expiration
+      const now = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp <= now) {
+        this.emit('token_validation_error', { error: 'Token expired', expiredAt: payload.exp, currentTime: now });
+        return null;
+      }
+      
+      // Check token not before time
+      if (payload.nbf && payload.nbf > now) {
+        this.emit('token_validation_error', { error: 'Token not yet valid', notBefore: payload.nbf, currentTime: now });
+        return null;
+      }
+      
+      // Validate issuer
+      if (payload.iss && payload.iss !== this.config.entityId) {
+        this.emit('token_validation_error', { error: 'Invalid token issuer', expected: this.config.entityId, actual: payload.iss });
+        return null;
+      }
+      
+      // Create validated user from token payload
+      const user: User = {
+        id: payload.sub || payload.userId || `user_${Date.now()}`,
+        username: payload.preferred_username || payload.email || `user_${Date.now()}`,
+        email: payload.email || `user_${Date.now()}@enterprise.local`,
+        firstName: payload.given_name || 'Unknown',
+        lastName: payload.family_name || 'User',
+        roles: Array.isArray(payload.roles) ? payload.roles : [],
+        permissions: Array.isArray(payload.permissions) ? payload.permissions : [],
+        department: payload.department || 'Unknown',
+        isActive: payload.active !== false,
+        lastLogin: new Date(payload.iat ? payload.iat * 1000 : Date.now()),
+        mfaEnabled: Boolean(payload.mfa_enabled),
+        metadata: {
+          tokenIssuer: payload.iss,
+          tokenAudience: payload.aud,
+          tokenIssuedAt: payload.iat,
+          tokenExpires: payload.exp,
+          sessionId: payload.sid || crypto.randomBytes(16).toString('hex')
+        }
+      };
+      
+      this.emit('token_validated', { userId: user.id, username: user.username });
+      return { user };
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.emit('token_validation_error', { error: errorMessage });
+      return null;
+    }
+  }
+
+  private decodeTokenPayload(encodedPayload: string): any {
+    try {
+      const decoded = Buffer.from(encodedPayload, 'base64').toString();
+      return JSON.parse(decoded);
+    } catch (error) {
+      return null;
+    }
   }
 
   public async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string } | null> {
-    return null;
+    try {
+      // SAML refresh implementation
+      // In SAML, refresh is typically done by re-authenticating with IdP
+      // or extending session if supported
+      
+      if (!refreshToken || refreshToken.length < 10) {
+        throw new Error('Invalid refresh token');
+      }
+      
+      // For SAML, we typically don't have refresh tokens like OAuth2
+      // Instead, we might extend session or redirect to IdP
+      const sessionData = await this.validateSessionToken(refreshToken);
+      if (!sessionData) {
+        throw new Error('Invalid session for refresh');
+      }
+      
+      // Generate new session tokens
+      const newAccessToken = this.generateSessionToken(sessionData.user);
+      const newRefreshToken = this.generateRefreshToken(sessionData.user);
+      
+      this.emit('token_refreshed', { 
+        userId: sessionData.user.id,
+        provider: 'saml'
+      });
+      
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      };
+      
+    } catch (error) {
+      this.emit('token_refresh_error', { 
+        error: error instanceof Error ? error.message : String(error),
+        token: refreshToken.substring(0, 10) + '...'
+      });
+      return null;
+    }
+  }
+
+  private generateSessionToken(user: User): string {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      preferred_username: user.username,
+      given_name: user.firstName,
+      family_name: user.lastName,
+      roles: user.roles,
+      permissions: user.permissions,
+      department: user.department,
+      mfa_enabled: user.mfaEnabled,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (4 * 60 * 60), // 4 hours
+      iss: this.config.entityId,
+      aud: 'trojanhorse-js'
+    };
+    
+    // Properly signed with HMAC-SHA256
+    const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
+    const payloadEncoded = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const signature = crypto.createHmac('sha256', this.config.privateKey || 'default-secret')
+      .update(`${header}.${payloadEncoded}`)
+      .digest('base64');
+    
+    return `${header}.${payloadEncoded}.${signature}`;
+  }
+
+  private generateRefreshToken(user: User): string {
+    const payload = {
+      sub: user.id,
+      type: 'refresh',
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
+      iss: this.config.entityId
+    };
+    
+    const payloadEncoded = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const signature = crypto.createHmac('sha256', this.config.privateKey || 'default-secret')
+      .update(payloadEncoded)
+      .digest('base64');
+    
+    return `${payloadEncoded}.${signature}`;
   }
 
   private async validateSAMLResponse(samlResponse: string): Promise<boolean> {
@@ -335,7 +534,7 @@ class SAMLProvider extends BaseAuthProvider {
 
       const timestampMatch = decoded.match(/NotOnOrAfter="([^"]+)"/);
       if (timestampMatch) {
-        const notOnOrAfter = new Date(timestampMatch[1]);
+        const notOnOrAfter = new Date(timestampMatch[1] || Date.now());
         if (notOnOrAfter < new Date()) {
           return false;
         }
@@ -355,18 +554,20 @@ class SAMLProvider extends BaseAuthProvider {
       
       const nameIdMatch = decoded.match(/<saml:NameID[^>]*>([^<]+)<\/saml:NameID>/);
       if (nameIdMatch) {
-        attributes.NameID = nameIdMatch[1];
+        attributes.NameID = nameIdMatch[1] || '';
       }
 
       const attributePattern = /<saml:Attribute Name="([^"]+)"[^>]*><saml:AttributeValue[^>]*>([^<]+)<\/saml:AttributeValue><\/saml:Attribute>/g;
       
       let match;
       while ((match = attributePattern.exec(decoded)) !== null) {
-        attributes[match[1]] = match[2];
+        if (match[1] && match[2]) {
+          attributes[match[1]] = match[2];
+        }
       }
 
       const sessionMatch = decoded.match(/SessionIndex="([^"]+)"/);
-      if (sessionMatch) {
+      if (sessionMatch && sessionMatch[1]) {
         attributes.SessionIndex = sessionMatch[1];
       }
 
@@ -588,6 +789,10 @@ class EnterpriseAuthManager extends EventEmitter {
 
   public getSessionManager(): SessionManager {
     return this.sessionManager;
+  }
+  
+  public getConfig(): AuthenticationConfig {
+    return this.config;
   }
 }
 

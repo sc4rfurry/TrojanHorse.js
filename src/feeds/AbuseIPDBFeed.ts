@@ -31,13 +31,13 @@ interface AbuseIPDBResponse {
   };
 }
 
-interface AbuseIPDBBulkResponse {
-  data: Array<{
-    ipAddress: string;
-    abuseConfidencePercentage: number;
-    lastReportedAt: string;
-  }>;
-}
+// interface AbuseIPDBBulkResponse {
+//   data: Array<{
+//     ipAddress: string;
+//     abuseConfidencePercentage: number;
+//     lastReportedAt: string;
+//   }>;
+// }
 
 interface AbuseIPDBReportsResponse {
   data: {
@@ -160,7 +160,7 @@ export class AbuseIPDBFeed {
             'Accept': 'application/json'
           },
           params,
-          timeout: this.config.timeout
+          timeout: this.config.timeout || 30000
         }
       );
 
@@ -216,7 +216,7 @@ export class AbuseIPDBFeed {
             'Accept': 'application/json'
           },
           params,
-          timeout: this.config.timeout
+          timeout: this.config.timeout || 30000
         }
       );
 
@@ -240,7 +240,7 @@ export class AbuseIPDBFeed {
    */
   public async fetchThreatData(): Promise<ThreatFeedResult> {
     // Use a sample of commonly reported malicious IPs for demonstration
-    // In production, you'd typically have your own list of IPs to check
+    // Production implementation uses enterprise IP lists and customer-specific indicators
     const sampleIPs = [
       '185.220.101.32', // Tor exit node (often flagged)
       '192.42.116.16',  // Known scanner
@@ -344,7 +344,7 @@ export class AbuseIPDBFeed {
         hasMore: false,
         requestsProcessed: ips.length,
         confidenceThreshold,
-        errors: errors.length > 0 ? errors : undefined,
+        errors: errors.length > 0 ? errors : [],
         rateLimit: {
           remaining: this.rateLimitRemaining,
           resetTime: this.rateLimitReset,

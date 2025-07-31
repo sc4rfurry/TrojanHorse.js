@@ -5,7 +5,7 @@
 
 import { EventEmitter } from 'events';
 import { Worker } from 'worker_threads';
-import { ThreatIndicator, ThreatFeedResult } from '../types';
+import { ThreatIndicator } from '../types';
 
 // ===== PROCESSING INTERFACES =====
 

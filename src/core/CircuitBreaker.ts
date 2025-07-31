@@ -161,12 +161,12 @@ export class CircuitBreaker extends EventEmitter {
     } = options;
 
     const results: Array<{ success: boolean; result?: T; error?: Error }> = [];
-    const executing: Promise<void>[] = [];
+    const executing: Promise<unknown>[] = [];
 
     for (let i = 0; i < functions.length; i++) {
       const fn = functions[i];
       
-      const executePromise = this.execute(fn)
+      const executePromise: Promise<unknown> = fn ? this.execute(fn) : Promise.reject(new Error('No function provided'))
         .then(result => {
           results[i] = { success: true, result };
         })
@@ -296,7 +296,7 @@ export class CircuitBreaker extends EventEmitter {
       timestamp: Date.now(),
       success,
       responseTime,
-      error
+      error: error || ''
     };
 
     this.requestHistory.push(record);
@@ -330,7 +330,8 @@ export class CircuitBreaker extends EventEmitter {
     
     const sorted = [...values].sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
-    return sorted[Math.max(0, index)];
+    const validIndex = Math.max(0, Math.min(index, sorted.length - 1));
+    return sorted[validIndex] ?? 0;
   }
 
   private sleep(ms: number): Promise<void> {

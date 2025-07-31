@@ -90,7 +90,7 @@ export class AlienVaultFeed {
       baseURL: 'https://otx.alienvault.com/api/v1',
       timeout: this.config.timeout || 30000,
       headers: {
-        'User-Agent': 'TrojanHorse.js/1.0.0 (Security Research)',
+        'User-Agent': 'TrojanHorse.js/1.0.1 (Security Research)',
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         ...(this.config.apiKey && {
@@ -474,7 +474,7 @@ export class AlienVaultFeed {
     // Return config without exposing sensitive API key
     return {
       ...this.config,
-      apiKey: this.config.apiKey ? '***masked***' : undefined
+      apiKey: this.config.apiKey ? '***masked***' : ''
     };
   }
 } 

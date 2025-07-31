@@ -8,60 +8,60 @@
  * - Threat enrichment and contextualization
  */
 
-import { ThreatIndicator, ThreatFeedResult } from '../types';
+import { ThreatIndicator } from '../types';
 
 // Correlation interfaces
-interface CorrelationResult {
-  indicator: EnrichedThreatIndicator;
-  sources: string[];
-  correlationScore: number;
-  consensusLevel: 'weak' | 'moderate' | 'strong' | 'consensus';
-  riskScore: number;
-  correlatedData: CorrelatedThreatData;
-}
+// interface CorrelationResult {
+//   indicator: EnrichedThreatIndicator;
+//   sources: string[];
+//   correlationScore: number;
+//   consensusLevel: 'weak' | 'moderate' | 'strong' | 'consensus';
+//   riskScore: number;
+//   correlatedData: CorrelatedThreatData;
+// }
 
-interface EnrichedThreatIndicator extends ThreatIndicator {
-  correlationScore: number;
-  consensusLevel: 'weak' | 'moderate' | 'strong' | 'consensus';
-  riskScore: number;
-  sourceFeedbacks: SourceFeedback[];
-  temporalAnalysis: TemporalAnalysis;
-  geoAnalysis?: GeoAnalysis;
-  patterns: ThreatPattern[];
-}
+// interface EnrichedThreatIndicator extends ThreatIndicator {
+//   correlationScore: number;
+//   consensusLevel: 'weak' | 'moderate' | 'strong' | 'consensus';
+//   riskScore: number;
+//   sourceFeedbacks: SourceFeedback[];
+//   temporalAnalysis: TemporalAnalysis;
+//   geoAnalysis?: GeoAnalysis;
+//   patterns: ThreatPattern[];
+// }
 
-interface SourceFeedback {
-  source: string;
-  confidence: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  lastSeen: Date;
-  reportCount?: number;
-  categories: string[];
-  agreement: number; // 0-1 score of agreement with other sources
-}
+// interface SourceFeedback {
+//   source: string;
+//   confidence: number;
+//   severity: 'low' | 'medium' | 'high' | 'critical';
+//   lastSeen: Date;
+//   reportCount?: number;
+//   categories: string[];
+//   agreement: number; // 0-1 score of agreement with other sources
+// }
 
-interface TemporalAnalysis {
-  firstSeen: Date;
-  lastSeen: Date;
-  activityPeriod: number; // days
-  recentActivity: boolean;
-  activityTrend: 'increasing' | 'decreasing' | 'stable' | 'sporadic';
-  peakActivity?: Date;
-}
+// interface TemporalAnalysis {
+//   firstSeen: Date;
+//   lastSeen: Date;
+//   activityPeriod: number; // days
+//   recentActivity: boolean;
+//   activityTrend: 'increasing' | 'decreasing' | 'stable' | 'sporadic';
+//   peakActivity?: Date;
+// }
 
-interface GeoAnalysis {
-  countries: string[];
-  primaryCountry: string;
-  suspiciousGeoPatterns: boolean;
-  geoRiskScore: number;
-}
+// interface GeoAnalysis {
+//   countries: string[];
+//   primaryCountry: string;
+//   suspiciousGeoPatterns: boolean;
+//   geoRiskScore: number;
+// }
 
-interface ThreatPattern {
-  type: 'behavioral' | 'temporal' | 'network' | 'categorical';
-  pattern: string;
-  confidence: number;
-  evidenceSources: string[];
-}
+// interface ThreatPattern {
+//   type: 'behavioral' | 'temporal' | 'network' | 'categorical';
+//   pattern: string;
+//   confidence: number;
+//   evidenceSources: string[];
+// }
 
 interface CorrelatedThreatData {
   relatedIndicators: ThreatIndicator[];
@@ -130,9 +130,9 @@ interface CorrelationConfig {
 
 export class ThreatCorrelationEngine {
   private config: CorrelationConfig;
-  private sourceReliability: Map<string, number>;
-  private knownPatterns: Map<string, ThreatPattern[]>;
-  private correlationCache: Map<string, CorrelatedThreatData>;
+  // private sourceReliability: Map<string, number>;
+  // private knownPatterns: Map<string, ThreatPattern[]>;
+  // private correlationCache: Map<string, CorrelatedThreatData>;
 
   constructor(config: Partial<CorrelationConfig> = {}) {
     // Validate configuration
@@ -160,9 +160,9 @@ export class ThreatCorrelationEngine {
       ...config
     };
     
-    this.correlationCache = new Map();
-    this.sourceReliability = new Map();
-    this.knownPatterns = new Map();
+    // this.correlationCache = new Map();
+    // this.sourceReliability = new Map();
+    // this.knownPatterns = new Map();
   }
 
   /**
@@ -212,7 +212,7 @@ export class ThreatCorrelationEngine {
     case 'json':
       return JSON.stringify({ ...result, timestamp: new Date().toISOString() }, null, 2);
       
-    case 'stix':
+    case 'stix': {
       const stixObject = {
         type: 'bundle',
         id: `bundle--${Date.now()}`,
@@ -228,13 +228,15 @@ export class ThreatCorrelationEngine {
         }]
       };
       return JSON.stringify(stixObject, null, 2);
+    }
       
-    case 'csv':
+    case 'csv': {
       const headers = 'type,value,confidence,sources,risk_score\n';
       const rows = (result.relatedIndicators || []).map((indicator: any) => 
         `${indicator.type},${indicator.value},${indicator.confidence},"${(result.sources || []).join(';')}",${result.riskScore || 0}`
       ).join('\n');
       return headers + rows;
+    }
       
     default:
       throw new Error(`Unsupported export format: ${format}`);
@@ -244,14 +246,14 @@ export class ThreatCorrelationEngine {
   /**
    * Add integration - stub implementation
    */
-  public addIntegration(name: string, integration: any): void {
+  public addIntegration(_name: string, _integration: any): void {
     // Stub implementation for compatibility
   }
 
   /**
    * Share result - stub implementation  
    */
-  public async shareResult(result: CorrelatedThreatData, platform: string): Promise<void> {
+  public async shareResult(_result: CorrelatedThreatData, _platform: string): Promise<void> {
     // Stub implementation for compatibility
   }
 } 

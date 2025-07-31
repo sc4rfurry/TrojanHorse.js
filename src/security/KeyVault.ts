@@ -272,7 +272,9 @@ export class KeyVault {
 
     } catch (error) {
       // Rollback on error
-      this.decryptedKeys[provider] = oldKey;
+      if (this.decryptedKeys && oldKey) {
+        this.decryptedKeys[provider] = oldKey;
+      }
       throw new SecurityError(`Key rotation failed for ${provider}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -525,6 +527,7 @@ export class KeyVault {
     });
   }
 
+  // @ts-ignore - Keep for future use
   private sanitizeProvider(provider: string): string {
     // Remove any potentially dangerous characters
     return provider.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -535,13 +538,13 @@ export class KeyVault {
    */
   private auditLog(level: 'info' | 'warn' | 'error', message: string, details?: any): void {
     const timestamp = new Date().toISOString();
-    const logEntry = {
-      timestamp,
-      level,
-      service: 'KeyVault',
-      message,
-      ...(details && { details })
-    };
+    // const _logEntry = {
+    //   timestamp,
+    //   level,
+    //   service: 'KeyVault',
+    //   message,
+    //   ...(details && { details })
+    // };
 
     // For now, just log to console. In production, this would go to a proper audit system
     console[level](`[KeyVault Audit] ${timestamp} - ${message}`, details || '');

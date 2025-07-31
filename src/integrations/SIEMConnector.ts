@@ -44,7 +44,7 @@ abstract class BaseSIEMConnector extends EventEmitter {
       timeout: config.timeout || 30000,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'TrojanHorse.js/1.0.0'
+        'User-Agent': 'TrojanHorse.js/1.0.1'
       }
     });
 
@@ -184,7 +184,7 @@ class QRadarConnector extends BaseSIEMConnector {
       'high': 7,
       'critical': 10
     };
-    return mapping[severity] || 5;
+    return mapping[severity as keyof typeof mapping] || 5;
   }
 
   public async validateConnection(): Promise<boolean> {

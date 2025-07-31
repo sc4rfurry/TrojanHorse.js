@@ -247,7 +247,7 @@ export class StreamingProcessor extends EventEmitter {
    */
   public async processStream(
     inputStream: Readable,
-    processor: ChunkProcessor,
+    _processor: ChunkProcessor,
     options: {
       processorType: 'csv' | 'json' | 'xml';
       onProgress?: (stats: ProcessingStats) => void;
@@ -258,7 +258,6 @@ export class StreamingProcessor extends EventEmitter {
     this.stats = this.initializeStats();
 
     const allIndicators: ThreatIndicator[] = [];
-    const chunks: Buffer[] = [];
     let currentChunk = Buffer.alloc(0);
 
     try {
@@ -271,7 +270,7 @@ export class StreamingProcessor extends EventEmitter {
         objectMode: false,
         highWaterMark: bufferSize,
         
-        transform(chunk: Buffer, encoding, callback) {
+        transform(chunk: Buffer, _encoding, callback) {
           currentChunk = Buffer.concat([currentChunk, chunk]);
           
           // Split into processable chunks
@@ -298,7 +297,7 @@ export class StreamingProcessor extends EventEmitter {
         objectMode: false,
         highWaterMark: this.config.bufferSize,
         
-        write: async (chunk: Buffer, encoding, callback) => {
+        write: async (chunk: Buffer, _encoding, callback) => {
           try {
             await this.monitorMemoryUsage();
             
@@ -474,7 +473,7 @@ export class StreamingProcessor extends EventEmitter {
   /**
    * Creates a chunking stream for large data processing
    */
-  public createLargeDataStream(filePath: string): Transform {
+  public createLargeDataStream(_filePath: string): Transform {
     let currentChunk = Buffer.alloc(0);
     
     // Capture config values for use in transform functions
@@ -486,7 +485,7 @@ export class StreamingProcessor extends EventEmitter {
       objectMode: false,
       highWaterMark: bufferSize,
       
-      transform(chunk: Buffer, encoding, callback) {
+      transform(chunk: Buffer, _encoding, callback) {
         currentChunk = Buffer.concat([currentChunk, chunk]);
         
         // Split into processable chunks
@@ -511,6 +510,7 @@ export class StreamingProcessor extends EventEmitter {
     return chunkingStream;
   }
 
+  // @ts-ignore - Keeping for future use
   private createHttpStream(url: string): Readable {
     const https = require('https');
     const http = require('http');
@@ -546,6 +546,7 @@ export class StreamingProcessor extends EventEmitter {
     });
   }
 
+  // @ts-ignore - Keeping for future use
   private createFileStream(filePath: string): Readable {
     const fs = require('fs');
     return fs.createReadStream(filePath, {
@@ -604,7 +605,7 @@ export class StreamingProcessor extends EventEmitter {
 
   private createSimpleProcessor(): ChunkProcessor {
     return {
-      async process(chunk: Buffer): Promise<ThreatIndicator[]> {
+      async process(_chunk: Buffer): Promise<ThreatIndicator[]> {
         // This is handled by workers, just return empty array
         return [];
       }

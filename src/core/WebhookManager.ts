@@ -8,7 +8,7 @@
 import { EventEmitter } from 'events';
 import axios, { AxiosResponse } from 'axios';
 import crypto from 'crypto';
-import { ThreatIndicator, ThreatFeedResult } from '../types';
+import { ThreatIndicator } from '../types';
 
 export interface WebhookConfig {
   id: string;
@@ -136,7 +136,7 @@ export class WebhookManager extends EventEmitter {
       data,
       metadata: {
         source: 'TrojanHorse.js',
-        version: '1.0.0',
+        version: '1.0.1',
         environment: process.env.NODE_ENV || 'development',
         ...metadata
       }
@@ -195,7 +195,7 @@ export class WebhookManager extends EventEmitter {
       const response: AxiosResponse = await axios.post(webhook.url, delivery.payload, {
         headers: {
           'Content-Type': 'application/json',
-          'User-Agent': 'TrojanHorse.js-Webhook/1.0.0',
+          'User-Agent': 'TrojanHorse.js-Webhook/1.0.1',
           'X-TrojanHorse-Signature': signature,
           'X-TrojanHorse-Event': delivery.event,
           'X-TrojanHorse-Delivery': delivery.id,
@@ -303,7 +303,7 @@ export class WebhookManager extends EventEmitter {
 
       delivery.attempt++;
       delivery.status = 'pending';
-      delivery.nextRetryAt = undefined;
+      delete delivery.nextRetryAt;
 
       try {
         await this.sendWebhook(webhook, delivery);
@@ -525,7 +525,7 @@ export class WebhookManager extends EventEmitter {
   public shutdown(): void {
     if (this.retryTimer) {
       clearInterval(this.retryTimer);
-      this.retryTimer = undefined;
+      delete this.retryTimer;
     }
 
     this.emit('shutdown');

@@ -35,7 +35,7 @@ export class TrojanHorse {
   private readonly keyVault: KeyVault;
   private readonly feeds: Map<string, any> = new Map();
   private readonly circuitBreakers: Map<string, CircuitBreaker> = new Map();
-  private readonly correlationEngine: ThreatCorrelationEngine;
+  // private readonly correlationEngine: ThreatCorrelationEngine;
   public readonly config: Required<TrojanHorseConfig>; // Made public for tests
   private readonly eventListeners: Map<keyof TrojanHorseEvents, Function[]> = new Map();
 
@@ -76,7 +76,7 @@ export class TrojanHorse {
 
   constructor(config: Partial<TrojanHorseConfig> = {}) {
     console.log(this.getAsciiArt());
-    console.log('🛡️  TrojanHorse.js v1.0.0 - Initializing digital fortress...');
+    console.log('🛡️  TrojanHorse.js v1.0.1 - Initializing digital fortress...');
 
     // Validate configuration before proceeding
     this.validateConfiguration(config);
@@ -87,7 +87,7 @@ export class TrojanHorse {
     // Initialize core components
     this.cryptoEngine = new CryptoEngine();
     this.keyVault = new KeyVault(this.config.vault);
-    this.correlationEngine = new ThreatCorrelationEngine();
+    // this.correlationEngine = new ThreatCorrelationEngine();
 
     // Initialize threat feeds
     this.initializeFeeds();
@@ -256,10 +256,11 @@ export class TrojanHorse {
 
         // Validate malformed targets
         const malformedPatterns = [
-          /^[^a-zA-Z0-9\-\.:\/]/,  // Invalid starting characters
-          /[\x00-\x1f\x7f-\x9f]/,  // Control characters
+          /^[^a-zA-Z0-9\-.:/]/,  // Invalid starting characters
+          // eslint-disable-next-line no-control-regex
+          /[\u0000-\u001f\u007f-\u009f]/,  // Control characters
           /\s{5,}/,                 // Too many consecutive spaces
-          /[^\x20-\x7e]/          // Non-printable ASCII
+          /[^\u0020-\u007e]/          // Non-printable ASCII
         ];
 
         if (malformedPatterns.some(pattern => pattern.test(target))) {
@@ -390,7 +391,7 @@ export class TrojanHorse {
       let data: string;
       
       switch (format) {
-      case 'json':
+      case 'json': {
         // Add metadata for JSON export as expected by tests
         const exportData = {
           ...threats,
@@ -406,6 +407,7 @@ export class TrojanHorse {
         };
         data = JSON.stringify(exportData, null, 2);
         break;
+      }
       case 'csv':
         data = this.convertToCSV(threats.indicators);
         break;
@@ -672,7 +674,7 @@ export class TrojanHorse {
     // Initialize CrowdSec CTI (works with or without API key)
     if (this.config.sources.includes('crowdsec')) {
       this.feeds.set('crowdsec', new CrowdSecFeed({
-        apiKey: this.extractApiKey(this.config.apiKeys?.crowdsec)
+        apiKey: this.extractApiKey(this.config.apiKeys?.crowdsec) || ''
       }));
     }
 
@@ -801,12 +803,12 @@ export class TrojanHorse {
       return;
     }
 
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      level,
-      message,
-      ...(details && { details })
-    };
+    // const _logEntry = {
+    //   timestamp: new Date().toISOString(),
+    //   level,
+    //   message,
+    //   ...(details && { details })
+    // };
 
     if (this.config.audit.destinations.includes('console')) {
       console[level](`[TrojanHorse] ${message}`, details || '');

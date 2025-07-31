@@ -186,8 +186,8 @@ export class TrojanHorseError extends Error {
     super(message);
     this.name = 'TrojanHorseError';
     this.code = code;
-    this.statusCode = statusCode;
-    this.details = details;
+    this.statusCode = statusCode || 500;
+    this.details = details || {};
     Error.captureStackTrace(this, TrojanHorseError);
   }
 }
@@ -212,7 +212,7 @@ export class RateLimitError extends TrojanHorseError {
   constructor(message: string, retryAfter?: number, details?: Record<string, any>) {
     super(message, 'RATE_LIMIT_ERROR', 429, details);
     this.name = 'RateLimitError';
-    this.retryAfter = retryAfter;
+    this.retryAfter = retryAfter || 60;
   }
 }
 

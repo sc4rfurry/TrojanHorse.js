@@ -557,7 +557,7 @@ ${Object.keys(apiKeys).map(key => {
 ---
 
 Generated on ${new Date().toISOString()}
-TrojanHorse.js v1.0.0
+TrojanHorse.js v1.0.1
 `;
 
   await fs.writeFile('setup-guide.md', docs);

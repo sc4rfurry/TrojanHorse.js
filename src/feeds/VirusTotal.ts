@@ -5,7 +5,7 @@
  * Supports both free and premium API tiers
  */
 
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { FeedConfiguration, ThreatFeedResult, ThreatIndicator } from '../types';
 
 interface VirusTotalConfig {
@@ -145,8 +145,8 @@ export class VirusTotalFeed {
       priority: 'high',
       sslPinning: true,
       apiKey: vtConfig.apiKey,
-      timeout: this.vtConfig.timeout,
-      retries: this.vtConfig.retries
+      timeout: this.vtConfig.timeout || 30000,
+      retries: this.vtConfig.retries || 3
     };
 
     this.validateApiKey();
@@ -165,10 +165,10 @@ export class VirusTotalFeed {
       const response = await axios.get(`${this.vtConfig.baseUrl}${endpoint}`, {
         headers: {
           'x-apikey': this.vtConfig.apiKey,
-          'User-Agent': 'TrojanHorse.js/1.0.0',
+          'User-Agent': 'TrojanHorse.js/1.0.1',
           'Accept': 'application/json'
         },
-        timeout: this.vtConfig.timeout
+        timeout: this.vtConfig.timeout || 30000
       });
 
       this.requestCount++;

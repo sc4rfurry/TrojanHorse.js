@@ -70,7 +70,7 @@ export class URLhausFeed {
     this.axiosInstance = axios.create({
       timeout: this.config.timeout || 30000,
       headers: {
-        'User-Agent': 'TrojanHorse.js/1.0.0 (Threat Intelligence Library)',
+        'User-Agent': 'TrojanHorse.js/1.0.1 (Threat Intelligence Library)',
         'Accept': 'text/csv',
         'Cache-Control': 'no-cache'
       },
@@ -216,6 +216,7 @@ export class URLhausFeed {
     );
   }
 
+  // @ts-ignore - Keep for future use
   private checkRateLimit(): void {
     const now = Date.now();
     const timeSinceLastFetch = now - this.lastFetchTime;

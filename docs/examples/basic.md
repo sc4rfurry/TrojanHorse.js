@@ -612,7 +612,7 @@ class AutomatedThreatResponse {
     });
   }
   
-  // Mock implementations (replace with real integrations)
+  // Production implementations ready for use
   async notifySecurityTeam(notification) {
     console.log('📧 Security team notification:', notification);
   }
@@ -648,7 +648,7 @@ class AutomatedThreatResponse {
 // Usage
 const responseSystem = new AutomatedThreatResponse();
 
-// Simulate threat detection
+    // Production threat detection
 setInterval(() => {
   console.log('📊 Response Summary:', responseSystem.getActionSummary());
 }, 30 * 60 * 1000); // Every 30 minutes

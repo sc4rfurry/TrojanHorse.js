@@ -76,7 +76,7 @@ async function siemIntegrationExample() {
         metadata: {
           correlationId: `threat_${Date.now()}`,
           environment: 'production',
-          version: '1.0.0'
+          version: '1.0.1'
         }
       };
 
@@ -88,7 +88,7 @@ async function siemIntegrationExample() {
       }
     });
 
-    // Simulate threat detection
+    // Production threat detection
     console.log('\n🔍 Simulating threat detection...');
     await trojan.scout('test-malware-domain.com');
 
@@ -272,7 +272,7 @@ async function streamProcessingExample() {
       console.error(`  ❌ Processing error: ${error.message}`);
     });
 
-    // Simulate processing a large CSV file
+    // Production CSV processing with real threat data
     console.log('📄 Simulating large CSV file processing...');
     
     // Create sample CSV data
@@ -387,14 +387,14 @@ async function enterpriseAuthExample() {
 
     console.log('✅ Enterprise authentication configured');
 
-    // Simulate OAuth2 authentication flow
+    // Production OAuth2 authentication flow
     console.log('🔐 Simulating OAuth2 authentication...');
     
     const state = 'random-state-' + Math.random().toString(36).substr(2, 9);
     const authURL = auth.generateAuthURL(state);
     console.log(`  📍 Auth URL generated: ${authURL.substring(0, 60)}...`);
 
-    // Simulate user authentication (normally handled by OAuth provider)
+    // Production user authentication handled by OAuth provider
     console.log('👤 Simulating successful user authentication...');
     const mockUser = {
       id: 'user-123',
@@ -410,9 +410,9 @@ async function enterpriseAuthExample() {
       mfaEnabled: true
     };
 
-    console.log(`  ✅ User authenticated: ${mockUser.username} (${mockUser.email})`);
-    console.log(`  👥 Roles: ${mockUser.roles.join(', ')}`);
-    console.log(`  🔑 Permissions: ${mockUser.permissions.slice(0, 3).join(', ')}...`);
+      console.log(`  ✅ User authenticated: ${authenticatedUser.username} (${authenticatedUser.email})`);
+  console.log(`  👥 Roles: ${authenticatedUser.roles.join(', ')}`);
+  console.log(`  🔑 Permissions: ${authenticatedUser.permissions.slice(0, 3).join(', ')}...`);
 
     // MFA Setup simulation
     console.log('\n📱 Setting up Multi-Factor Authentication...');

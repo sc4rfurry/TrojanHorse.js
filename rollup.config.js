@@ -8,6 +8,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 // Node.js externals (these should NOT be bundled)
 const nodeExternals = [
@@ -23,9 +24,6 @@ const nodeExternals = [
   'node:crypto',
   'node:util',
   'node:assert',
-  'events',
-  'stream',
-  'buffer',
   // Project dependencies that should remain external
   'crypto-js',
   'axios',
@@ -59,7 +57,53 @@ const nodeExternals = [
   'node-forge'
 ];
 
-// Base plugins for Node.js builds
+// Browser externals (for UMD/minified builds) - excludes polyfillable modules
+const browserExternals = [
+  // Node.js built-ins that cannot be polyfilled
+  'argon2',
+  'crypto',
+  'fs',
+  'path',
+  'os',
+  'util',
+  'module',
+  'url',
+  'node:crypto',
+  'node:util',
+  'node:assert',
+  // events, stream, buffer are excluded here so polyfills can handle them
+  // Project dependencies that should remain external
+  'crypto-js',
+  'axios',
+  'dexie',
+  'joi',
+  'commander',
+  'chalk',
+  'ora',
+  'inquirer',
+  'express',
+  'helmet',
+  'compression',
+  'express-rate-limit',
+  'cors',
+  'jsonwebtoken',
+  'bcryptjs',
+  'swagger-ui-express',
+  'swagger-jsdoc',
+  'multer',
+  'ws',
+  'redis',
+  'nodemailer',
+  'otplib',
+  'qrcode',
+  'express-session',
+  '@elastic/elasticsearch',
+  'validator',
+  'sanitize-html',
+  'node-forge'
+];
+
+ // Base plugins for Node.js builds
 const basePlugins = [
   resolve({
     preferBuiltins: true, // Prefer Node.js built-ins
@@ -112,6 +156,7 @@ export default [
       exports: 'named',
       sourcemap: true,
       globals: {
+        'events': 'events',
         'argon2': 'argon2',
         'crypto': 'crypto',
         'fs': 'fs',
@@ -120,6 +165,8 @@ export default [
         'util': 'util',
         'module': 'module',
         'url': 'url',
+        'stream': 'stream',
+        'buffer': 'buffer',
         'node:crypto': 'crypto',
         'node:util': 'util',
         'node:assert': 'assert',
@@ -128,8 +175,11 @@ export default [
         'dexie': 'Dexie'
       }
     },
-    external: [...nodeExternals, /^node:/],
-    plugins: basePlugins
+    external: [...browserExternals, /^node:/],
+    plugins: [
+      ...basePlugins,
+      nodePolyfills()
+    ]
   },
 
   // Node.js Minified build
@@ -142,6 +192,7 @@ export default [
       exports: 'named',
       sourcemap: true,
       globals: {
+        'events': 'events',
         'argon2': 'argon2',
         'crypto': 'crypto',
         'fs': 'fs',
@@ -150,6 +201,8 @@ export default [
         'util': 'util',
         'module': 'module',
         'url': 'url',
+        'stream': 'stream',
+        'buffer': 'buffer',
         'node:crypto': 'crypto',
         'node:util': 'util',
         'node:assert': 'assert',
@@ -158,9 +211,10 @@ export default [
         'dexie': 'Dexie'
       }
     },
-    external: [...nodeExternals, /^node:/],
+    external: [...browserExternals, /^node:/],
     plugins: [
       ...basePlugins,
+      nodePolyfills(),
       terser({
         compress: {
           drop_console: ['log', 'info'], // Keep warn and error

@@ -4,7 +4,7 @@
  */
 
 import CryptoJS from 'crypto-js';
-import { EncryptedVault, SecureVaultOptions, SecurityError } from '../types';
+import { SecureVaultOptions, SecurityError } from '../types';
 
 // ES Module compatible Argon2 import
 let argon2: any = null;
@@ -21,29 +21,31 @@ async function loadArgon2() {
     if (typeof process !== 'undefined' && process.versions?.node) {
       // Node.js environment - try different import methods
       try {
-        // For Jest/test environment, use require
-        if (process.env.NODE_ENV === 'test') {
-          // Use dynamic require for test environment
-          const argon2Module = eval('require')('argon2');
-          argon2 = argon2Module;
+        // For Node.js environment, try different import strategies without eval
+        if (typeof require !== 'undefined') {
+          // Direct require if available
+          argon2 = require('argon2');
           argon2Available = true;
           return argon2;
         }
         
-        // For normal Node.js environment, use ES module imports
+        // For ES modules environment
         const { createRequire } = await import('module');
-        const require = createRequire(new URL('file://' + __filename).href);
-        argon2 = require('argon2');
+        const moduleRequire = createRequire(import.meta.url || new URL('file://' + __filename).href);
+        argon2 = moduleRequire('argon2');
         argon2Available = true;
         return argon2;
       } catch (importError) {
-        // Fallback to eval require
+        // If argon2 is not available, gracefully fallback to PBKDF2
         try {
-          argon2 = eval('require')('argon2');
+          // Try dynamic import as last resort
+          const argon2Module = await import('argon2');
+          argon2 = argon2Module.default || argon2Module;
           argon2Available = true;
           return argon2;
-        } catch (requireError) {
+        } catch (dynamicImportError) {
           console.warn('Argon2 not available, falling back to PBKDF2');
+          argon2Available = false;
           return null;
         }
       }
@@ -75,12 +77,12 @@ export class CryptoEngine {
   private static readonly ALGORITHM = 'AES-256-GCM';
   private static readonly KEY_SIZE = 32; // 256 bits
   private static readonly IV_SIZE_GCM = 12; // 96 bits for GCM (NIST recommended)
-  private static readonly IV_SIZE_CBC = 16; // 128 bits for CBC
+  // private static readonly IV_SIZE_CBC = 16; // 128 bits for CBC
   private static readonly SALT_SIZE = 32;
-  private static readonly TAG_SIZE = 16; // 128 bits
+  // private static readonly TAG_SIZE = 16; // 128 bits
   
   // Current implementation uses GCM as primary, CBC as fallback
-  private static readonly USE_GCM_PRIMARY = true;
+  // private static readonly USE_GCM_PRIMARY = true;
   
   // Argon2id parameters
   private static readonly ARGON2_MEMORY = 64 * 1024; // 64MB
@@ -209,10 +211,12 @@ export class CryptoEngine {
       const keyBytes: number[] = [];
       for (let i = 0; i < key.words.length; i++) {
         const word = key.words[i];
-        keyBytes.push((word >> 24) & 0xff);
-        keyBytes.push((word >> 16) & 0xff);
-        keyBytes.push((word >> 8) & 0xff);
-        keyBytes.push(word & 0xff);
+        if (word !== undefined) {
+          keyBytes.push((word >> 24) & 0xff);
+          keyBytes.push((word >> 16) & 0xff);
+          keyBytes.push((word >> 8) & 0xff);
+          keyBytes.push(word & 0xff);
+        }
       }
 
       return { 
@@ -474,7 +478,10 @@ export class CryptoEngine {
         // Overwrite buffer with random data
         const randomData = this.generateSecureRandom(data.length);
         for (let i = 0; i < data.length; i++) {
-          data[i] = randomData[i];
+          const value = randomData[i];
+          if (value !== undefined) {
+            data[i] = value;
+          }
         }
         data.fill(0);
       } else if (data && typeof data === 'object' && data.words) {
@@ -489,7 +496,10 @@ export class CryptoEngine {
         // Handle Uint8Array properly
         const randomData = this.generateSecureRandom(data.length);
         for (let i = 0; i < data.length; i++) {
-          data[i] = randomData[i];
+          const value = randomData[i];
+          if (value !== undefined) {
+            data[i] = value;
+          }
         }
         data.fill(0);
       }

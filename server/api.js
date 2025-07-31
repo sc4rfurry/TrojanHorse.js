@@ -146,7 +146,7 @@ const swaggerOptions = {
     openapi: '3.0.0',
     info: {
       title: 'TrojanHorse.js API',
-      version: '1.0.0',
+      version: '1.0.1',
       description: 'Comprehensive threat intelligence API',
       contact: {
         name: 'TrojanHorse.js Team',

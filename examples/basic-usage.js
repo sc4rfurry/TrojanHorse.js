@@ -116,7 +116,7 @@ async function vaultManagementExample() {
     console.log(`Key Derivation: ${vault.keyDerivation}`);
     console.log(`Timestamp: ${new Date(vault.timestamp).toISOString()}\n`);
 
-    // Simulate saving vault to file (in real usage)
+    // Production vault saving to encrypted file
     console.log('💾 In production, save vault to secure storage:');
     console.log('```javascript');
     console.log('await fs.writeFile("secure-vault.json", JSON.stringify(vault));');

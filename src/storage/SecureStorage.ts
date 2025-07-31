@@ -111,15 +111,16 @@ export class SecureStorage extends Dexie {
       await this.checkStorageQuota(encrypted.length);
 
       // Store in IndexedDB
-      await this.storage.put({
+      const entry = {
         key,
         encryptedData: encrypted,
         iv,
         timestamp: Date.now(),
-        expiresAt,
-        tags: options.tags,
-        size: encrypted.length
-      });
+        tags: options.tags || [],
+        size: encrypted.length,
+        ...(expiresAt && { expiresAt })
+      };
+      await this.storage.put(entry);
 
     } catch (error) {
       throw new TrojanHorseError(
@@ -202,19 +203,20 @@ export class SecureStorage extends Dexie {
     source: string,
     ttl?: number
   ): Promise<void> {
-    const cacheEntry: CacheEntry<ThreatIndicator[]> = {
+    const cacheEntry = {
       data: indicators,
       timestamp: Date.now(),
-      expiresAt: ttl ? Date.now() + ttl : undefined,
       source,
-      hash: this.calculateHash(indicators)
-    };
+      hash: this.calculateHash(indicators),
+      ...(ttl && { expiresAt: Date.now() + ttl })
+    } as CacheEntry<ThreatIndicator[]>;
 
-    await this.store(`threats:${source}`, cacheEntry, {
-      ttl,
+    const storeOptions = {
       tags: ['threats', source],
-      compress: true
-    });
+      compress: true,
+      ...(ttl && { ttl })
+    };
+    await this.store(`threats:${source}`, cacheEntry, storeOptions);
   }
 
   /**
@@ -378,7 +380,7 @@ export class SecureStorage extends Dexie {
     try {
       const allData = await this.storage.toArray();
       const backup = {
-        version: '1.0.0',
+        version: '1.0.1',
         timestamp: Date.now(),
         entries: allData
       };
@@ -411,6 +413,10 @@ export class SecureStorage extends Dexie {
 
     try {
       const [iv, encrypted] = encryptedBackup.split(':');
+      
+      if (!encrypted || !iv) {
+        throw new TrojanHorseError('Invalid encrypted backup format', 'DECRYPTION_ERROR');
+      }
       
       const decrypted = CryptoJS.AES.decrypt(encrypted, this.config.encryptionKey, {
         iv: CryptoJS.enc.Utf8.parse(iv),
