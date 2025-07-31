@@ -40,10 +40,21 @@ theme:
 
 plugins:
   - search
+  - mermaid2:
+      arguments:
+        theme: dark
+        themeVariables:
+          primaryColor: '#dc2626'
+          primaryTextColor: '#ffffff'
+          primaryBorderColor: '#ef4444'
+          lineColor: '#10b981'
+          secondaryColor: '#1f2937'
+          tertiaryColor: '#374151'
   - minify:
       minify_html: true
   - git-revision-date-localized:
       enable_creation_date: true
+      fallback_to_build_date: true
 
 markdown_extensions:
   - admonition

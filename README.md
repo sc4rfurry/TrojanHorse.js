@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![TrojanHorse.js Banner](https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/banner.png)
+![TrojanHorse.js Banner](https://raw.githubusercontent.com/sc4rfurry/TrojanHorse.js/main/assets/trojanhorse-banner.svg)
 
 **🛡️ The only Trojan you actually want in your system 🛡️**
 
@@ -13,6 +13,7 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/sc4rfurry/TrojanHorse.js/basic-checks.yml?branch=main&style=for-the-badge)](https://github.com/sc4rfurry/TrojanHorse.js/actions)
 [![Test Status](https://img.shields.io/badge/Tests-In%20Progress-yellow?style=for-the-badge)](TEST_STATUS.md)
+[![Documentation](https://readthedocs.org/projects/trojanhorse-js/badge/?version=latest&style=for-the-badge)](https://trojanhorse-js.readthedocs.io/en/latest/?badge=latest)
 [![Security](https://img.shields.io/badge/Security-A+-brightgreen?style=for-the-badge)](https://github.com/sc4rfurry/TrojanHorse.js/security)
 [![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue?style=for-the-badge)](https://www.typescriptlang.org/)
 

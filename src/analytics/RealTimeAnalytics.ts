@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { WebSocket } from 'ws';
+// import { WebSocket } from 'ws'; // TODO: Implement WebSocket analytics
 import nodemailer from 'nodemailer';
 
 // ===== ANALYTICS INTERFACES =====

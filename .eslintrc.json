@@ -1,0 +1,63 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-debugger": "error",
+    "no-alert": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-script-url": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "brace-style": ["error", "1tbs"],
+    "indent": ["error", 2],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "comma-dangle": ["error", "never"]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": 2022,
+        "sourceType": "module"
+      },
+      "rules": {
+        "no-unused-vars": "off",
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.spec.ts"],
+      "parser": "@typescript-eslint/parser",
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "no-unused-vars": "off",
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["bin/**/*.js", "server/**/*.js", "setup.js"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+} 
