@@ -1,0 +1,56 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "ESNext",
+    "lib": ["ES2018", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "isolatedModules": true,
+    
+    "outDir": "./dist/browser",
+    "rootDir": "./src",
+    
+    // No declarations for browser builds
+    "declaration": false,
+    "declarationMap": false,
+    
+    // Browser-specific settings
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    // Optimize for browsers
+    "downlevelIteration": true,
+    "importHelpers": false,
+    
+    // Source maps for debugging
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": false,
+    
+    // Relaxed settings for browser compatibility
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "removeComments": true,
+    "noEmitOnError": true,
+    "stripInternal": true
+  },
+  "include": [
+    "src/browser.ts",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "tests/**/*"
+  ]
+} 

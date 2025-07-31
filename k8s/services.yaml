@@ -1,0 +1,147 @@
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trojanhorse-redis
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: redis
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: redis
+  selector:
+    app: trojanhorse
+    component: redis
+
+---
+# PostgreSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trojanhorse-postgres
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: postgres
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgres
+  selector:
+    app: trojanhorse
+    component: postgres
+
+---
+# API Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trojanhorse-api
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000
+    name: http
+  - port: 8080
+    targetPort: 8080
+    name: websocket
+  selector:
+    app: trojanhorse
+    component: api
+
+---
+# Dashboard Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: trojanhorse-dashboard
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: dashboard
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
+  selector:
+    app: trojanhorse
+    component: dashboard
+
+---
+# Load Balancer for External Access
+apiVersion: v1
+kind: Service
+metadata:
+  name: trojanhorse-loadbalancer
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: loadbalancer
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+    name: api
+  - port: 443
+    targetPort: 3000
+    name: api-ssl
+  - port: 8080
+    targetPort: 8080
+    name: dashboard
+  selector:
+    app: trojanhorse
+    component: api
+
+---
+# Ingress for Domain-based Routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trojanhorse-ingress
+  namespace: trojanhorse-enterprise
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  tls:
+  - hosts:
+    - api.trojanhorse.enterprise.com
+    - dashboard.trojanhorse.enterprise.com
+    secretName: trojanhorse-tls
+  rules:
+  - host: api.trojanhorse.enterprise.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trojanhorse-api
+            port:
+              number: 3000
+  - host: dashboard.trojanhorse.enterprise.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trojanhorse-dashboard
+            port:
+              number: 8080 

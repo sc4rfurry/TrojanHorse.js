@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  trojanhorse-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    restart: unless-stopped
+    
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - trojanhorse-api
+    restart: unless-stopped

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrojanHorse.js - Simple Static Site Example</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #8B4513;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .alert {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .alert.demo {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        .alert h4 {
+            margin: 0 0 10px 0;
+            color: #0c5aa6;
+        }
+        
+        .alert.demo h4 {
+            color: #856404;
+        }
+        
+        .check-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus, input[type="url"]:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+        
+        button {
+            background: #8B4513;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #A0522D;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .result.safe {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .result.error {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .example-code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .feature h3 {
+            color: #8B4513;
+            margin-top: 0;
+        }
+        
+        .demo-threats {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .demo-threats h4 {
+            color: #8B4513;
+            margin: 0 0 10px 0;
+        }
+        
+        .threat-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .threat-item {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .threat-item:hover {
+            background: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏰 TrojanHorse.js</h1>
+        <p class="tagline">The only Trojan you actually want in your system</p>
+        
+        <div class="status" id="status">
+            ⚡ Initializing threat intelligence...
+        </div>
+        
+        <div class="alert demo" id="demo-alert" style="display: none;">
+            <h4>🎭 Demo Mode Active</h4>
+            <p>Running in demo mode due to CORS limitations. In production, use a backend proxy or serverless functions for real threat intelligence.</p>
+        </div>
+        
+        <div class="alert" id="proxy-alert" style="display: none;">
+            <h4>🌐 CORS Proxy Active</h4>
+            <p>Using CORS proxy server for real threat intelligence data from URLhaus feed.</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🛡️ Secure</h3>
+                <p>Zero-knowledge encryption</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Fast</h3>
+                <p>Cached threat lookups</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 Browser-Ready</h3>
+                <p>CORS-aware design</p>
+            </div>
+        </div>
+        
+        <div class="check-form">
+            <h2>🔍 Check for Threats</h2>
+            
+            <div class="form-group">
+                <label for="proxy-toggle">
+                    <input type="checkbox" id="proxy-toggle" checked style="margin-right: 5px;">
+                    Use CORS Proxy for Real Threat Data
+                </label>
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Unchecked = Demo Mode | Checked = Real URLhaus Data via Proxy
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label for="domain-input">Check Domain:</label>
+                <input type="text" id="domain-input" placeholder="example.com or malicious-site.com" />
+                <button onclick="checkDomain()">Check Domain</button>
+                <div id="domain-result" class="result" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="ip-input">Check IP Address:</label>
+                <input type="text" id="ip-input" placeholder="192.168.1.1 or 192.0.2.1" />
+                <button onclick="checkIP()">Check IP</button>
+                <div id="ip-result" class="result" style="display: none;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="url-input">Check URL:</label>
+                <input type="url" id="url-input" placeholder="https://example.com or http://malicious-site.com/malware.exe" />
+                <button onclick="checkURL()">Check URL</button>
+                <div id="url-result" class="result" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="demo-threats" id="demo-threats" style="display: none;">
+            <h4>🎯 Demo Threats (try these)</h4>
+            <p>Click any item below to test threat detection:</p>
+            <div class="threat-list">
+                <span class="threat-item" onclick="testValue('malicious-site.com', 'domain')">malicious-site.com</span>
+                <span class="threat-item" onclick="testValue('192.0.2.1', 'ip')">192.0.2.1</span>
+                <span class="threat-item" onclick="testValue('http://malicious-site.com/malware.exe', 'url')">malicious-site.com/malware.exe</span>
+                <span class="threat-item" onclick="testValue('phishing-example.net', 'domain')">phishing-example.net</span>
+                <span class="threat-item" onclick="testValue('198.51.100.1', 'ip')">198.51.100.1</span>
+            </div>
+        </div>
+        
+        <div class="alert">
+            <h4>🏭 Production Usage</h4>
+            <p>For production websites, you'll need to route requests through your backend to avoid CORS limitations:</p>
+            <div class="example-code">
+<pre>// Backend (Node.js/Express)
+app.post('/api/check-threat', async (req, res) => {
+  const trojan = new TrojanHorse({ 
+    apiKeys: { abuseipdb: process.env.ABUSEIPDB_KEY } 
+  });
+  const result = await trojan.scout(req.body.target);
+  res.json(result);
+});
+
+// Frontend
+const response = await fetch('/api/check-threat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ target: 'example.com' })
+});</pre>
+            </div>
+        </div>
+        
+        <div class="example-code">
+            <h3>💻 Quick Integration:</h3>
+            <pre>&lt;!-- Include TrojanHorse.js --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/trojanhorse-js@latest/dist/trojanhorse.browser.min.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+// Simple threat checking with automatic CORS handling
+const lookup = TrojanHorse.createLookup();
+
+async function checkSafety(url) {
+    const isMalicious = await lookup.checkURL(url);
+    return !isMalicious; // Returns true if safe
+}
+&lt;/script&gt;</pre>
+        </div>
+    </div>
+
+    <!-- Include TrojanHorse.js from local dist -->
+    <!-- In production, use: https://cdn.jsdelivr.net/npm/trojanhorse-js@latest/dist/trojanhorse.browser.min.js -->
+    <script src="../../dist/trojanhorse.browser.js"></script>
+    
+    <script>
+        let threatLookup = null;
+        let isInDemoMode = false;
+        const CORS_PROXY_URL = 'https://still-water-daf2.zeeahanm900.workers.dev';
+        
+        // Initialize TrojanHorse.js
+        async function initializeTrojanHorse() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                // Check browser support
+                const support = TrojanHorse.BrowserUtils.checkBrowserSupport();
+                
+                if (!support.supported) {
+                    statusEl.innerHTML = `❌ Browser not supported: ${support.missing.join(', ')}`;
+                    statusEl.style.background = '#f8d7da';
+                    return;
+                }
+                
+                // Check proxy toggle state
+                const useProxy = document.getElementById('proxy-toggle').checked;
+                
+                if (useProxy) {
+                    statusEl.innerHTML = '🌐 Proxy mode active - fetching real threat data';
+                    statusEl.style.background = '#d4edda';
+                    document.getElementById('proxy-alert').style.display = 'block';
+                    document.getElementById('demo-alert').style.display = 'none';
+                    document.getElementById('demo-threats').style.display = 'none';
+                } else {
+                    isInDemoMode = true;
+                    statusEl.innerHTML = '🎭 Demo mode active - using simulated data';
+                    statusEl.style.background = '#fff3cd';
+                    document.getElementById('demo-alert').style.display = 'block';
+                    document.getElementById('proxy-alert').style.display = 'none';
+                    document.getElementById('demo-threats').style.display = 'block';
+                }
+                
+                // Show warnings if any
+                if (support.warnings.length > 0) {
+                    console.log('TrojanHorse.js warnings:', support.warnings);
+                }
+                
+                // Test proxy connectivity if enabled
+                if (useProxy) {
+                    await testProxyConnectivity();
+                }
+                
+                // Create lookup functions
+                updateThreatLookup();
+                
+                // Enable the form
+                document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                
+            } catch (error) {
+                console.error('Failed to initialize TrojanHorse.js:', error);
+                statusEl.innerHTML = `❌ Initialization failed: ${error.message}`;
+                statusEl.style.background = '#f8d7da';
+            }
+        }
+        
+        // Test proxy connectivity
+        async function testProxyConnectivity() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                statusEl.innerHTML = '🔄 Testing proxy connectivity...';
+                
+                // Test with a small request first
+                const testUrl = `${CORS_PROXY_URL}/https://httpbin.org/json`;
+                const response = await fetch(testUrl, { 
+                    method: 'GET',
+                    signal: AbortSignal.timeout(10000) // 10 second timeout
+                });
+                
+                if (response.ok) {
+                    statusEl.innerHTML = '✅ Proxy connected - ready for real threat data';
+                    statusEl.style.background = '#d4edda';
+                    console.info('✅ CORS proxy is working correctly');
+                } else {
+                    throw new Error(`Proxy test failed: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.warn('Proxy connectivity test failed:', error);
+                statusEl.innerHTML = '⚠️ Proxy test failed - falling back to demo mode';
+                statusEl.style.background = '#fff3cd';
+                
+                // Auto-switch to demo mode
+                document.getElementById('proxy-toggle').checked = false;
+                document.getElementById('demo-alert').style.display = 'block';
+                document.getElementById('proxy-alert').style.display = 'none';
+                document.getElementById('demo-threats').style.display = 'block';
+            }
+        }
+        
+        // Update threat lookup based on proxy toggle
+        function updateThreatLookup() {
+            const useProxy = document.getElementById('proxy-toggle').checked;
+            
+            threatLookup = TrojanHorse.createLookup({
+                proxyUrl: useProxy ? CORS_PROXY_URL : null,
+                demoMode: !useProxy
+            });
+            
+            console.info(`Updated threat lookup: ${useProxy ? 'Proxy Mode' : 'Demo Mode'}`);
+        }
+        
+        // Handle proxy toggle changes
+        function onProxyToggleChange() {
+            const statusEl = document.getElementById('status');
+            const useProxy = document.getElementById('proxy-toggle').checked;
+            
+            if (useProxy) {
+                statusEl.innerHTML = '🔄 Switching to proxy mode...';
+                document.getElementById('demo-alert').style.display = 'none';
+                document.getElementById('demo-threats').style.display = 'none';
+                initializeThreatLookup(true);
+            } else {
+                statusEl.innerHTML = '🎭 Switching to demo mode...';
+                statusEl.style.background = '#fff3cd';
+                document.getElementById('proxy-alert').style.display = 'none';
+                document.getElementById('demo-alert').style.display = 'block';
+                document.getElementById('demo-threats').style.display = 'block';
+                updateThreatLookup();
+            }
+        }
+        
+        // Initialize with proxy mode
+        async function initializeThreatLookup(withProxy = false) {
+            if (withProxy) {
+                await testProxyConnectivity();
+            }
+            updateThreatLookup();
+        }
+        
+        // Test function for demo threats
+        function testValue(value, type) {
+            const input = document.getElementById(`${type}-input`);
+            input.value = value;
+            
+            // Trigger the appropriate check
+            if (type === 'domain') checkDomain();
+            else if (type === 'ip') checkIP();
+            else if (type === 'url') checkURL();
+        }
+        
+        // Threat checking functions
+        async function checkDomain() {
+            const input = document.getElementById('domain-input');
+            const result = document.getElementById('domain-result');
+            const button = event.target;
+            
+            if (!input.value.trim()) {
+                showResult(result, 'Please enter a domain', 'error');
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'Checking...';
+            
+            try {
+                const isMalicious = await threatLookup.checkDomain(input.value.trim());
+                
+                if (isMalicious) {
+                    showResult(result, `⚠️ ${input.value} appears to be malicious!`, 'danger');
+                } else {
+                    showResult(result, `✅ ${input.value} appears to be safe`, 'safe');
+                }
+            } catch (error) {
+                showResult(result, `Error checking domain: ${error.message}`, 'error');
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Check Domain';
+        }
+        
+        async function checkIP() {
+            const input = document.getElementById('ip-input');
+            const result = document.getElementById('ip-result');
+            const button = event.target;
+            
+            if (!input.value.trim()) {
+                showResult(result, 'Please enter an IP address', 'error');
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'Checking...';
+            
+            try {
+                const isMalicious = await threatLookup.checkIP(input.value.trim());
+                
+                if (isMalicious) {
+                    showResult(result, `⚠️ ${input.value} appears to be malicious!`, 'danger');
+                } else {
+                    showResult(result, `✅ ${input.value} appears to be safe`, 'safe');
+                }
+            } catch (error) {
+                showResult(result, `Error checking IP: ${error.message}`, 'error');
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Check IP';
+        }
+        
+        async function checkURL() {
+            const input = document.getElementById('url-input');
+            const result = document.getElementById('url-result');
+            const button = event.target;
+            
+            if (!input.value.trim()) {
+                showResult(result, 'Please enter a URL', 'error');
+                return;
+            }
+            
+            button.disabled = true;
+            button.textContent = 'Checking...';
+            
+            try {
+                const isMalicious = await threatLookup.checkURL(input.value.trim());
+                
+                if (isMalicious) {
+                    showResult(result, `⚠️ ${input.value} appears to be malicious!`, 'danger');
+                } else {
+                    showResult(result, `✅ ${input.value} appears to be safe`, 'safe');
+                }
+            } catch (error) {
+                showResult(result, `Error checking URL: ${error.message}`, 'error');
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Check URL';
+        }
+        
+        function showResult(element, message, type) {
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+            
+            // Auto-hide after 8 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 8000);
+        }
+        
+        // Disable buttons initially
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            
+            // Add proxy toggle event listener
+            document.getElementById('proxy-toggle').addEventListener('change', onProxyToggleChange);
+            
+            initializeTrojanHorse();
+        });
+    </script>
+</body>
+</html> 

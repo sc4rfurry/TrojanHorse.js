@@ -1,0 +1,268 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trojanhorse-config
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: config
+data:
+  # Enterprise Configuration
+  enterprise.yaml: |
+    enterprise:
+      licensing:
+        features:
+          - enterprise
+          - siem_integration
+          - ml_engine
+          - distributed_processing
+          - advanced_analytics
+        maxNodes: 50
+      deployment:
+        mode: cluster
+        region: us-east-1
+        environment: production
+      integrations:
+        siem:
+          - platform: splunk
+            endpoint: https://splunk.company.com:8089
+            authentication:
+              type: token
+            ssl:
+              verify: true
+          - platform: elastic
+            endpoint: https://elasticsearch.company.com:9200
+            authentication:
+              type: basic
+            ssl:
+              verify: true
+        authentication:
+          providers:
+            oauth2:
+              - provider: microsoft
+                clientId: "${AZURE_CLIENT_ID}"
+                authorizationURL: "https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/authorize"
+                tokenURL: "https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token"
+                userInfoURL: "https://graph.microsoft.com/v1.0/me"
+                scopes: ["openid", "profile", "email"]
+                callbackURL: "https://api.trojanhorse.enterprise.com/auth/callback"
+          session:
+            expiry: 480
+            secure: true
+            sameSite: strict
+          mfa:
+            required: true
+            issuer: "TrojanHorse Enterprise"
+            window: 1
+          rbac:
+            enabled: true
+            hierarchical: true
+          audit:
+            enabled: true
+            events: ["authentication", "authorization", "data_access"]
+        analytics:
+          retention:
+            metrics: 90
+            logs: 365
+            alerts: 180
+          aggregation:
+            intervals: ["1m", "5m", "1h", "1d"]
+            functions: ["avg", "sum", "max", "min", "count"]
+          realtime:
+            enabled: true
+            websocketPort: 8080
+            maxConnections: 1000
+          alerting:
+            enabled: true
+            evaluationInterval: 30
+            defaultChannels:
+              - type: slack
+                config:
+                  webhook: "${SLACK_WEBHOOK_URL}"
+                enabled: true
+              - type: email
+                config:
+                  smtp: "${SMTP_SERVER}"
+                  from: "alerts@trojanhorse.enterprise.com"
+                enabled: true
+      processing:
+        distributed: true
+        workerPools:
+          threat_analysis:
+            maxWorkers: 20
+            minWorkers: 5
+            workerScript: "./dist/workers/threat-analysis-worker.js"
+            taskTimeout: 30000
+            retryAttempts: 3
+            healthCheckInterval: 15000
+            autoScale: true
+            scalingPolicy:
+              scaleUpThreshold: 0.8
+              scaleDownThreshold: 0.3
+              cooldownPeriod: 300000
+          ml_inference:
+            maxWorkers: 10
+            minWorkers: 2
+            workerScript: "./dist/workers/ml-inference-worker.js"
+            taskTimeout: 60000
+            retryAttempts: 2
+            autoScale: true
+        messageQueue:
+          type: redis
+          connection:
+            host: trojanhorse-redis
+            port: 6379
+          persistence: true
+          maxSize: 10000
+          deadLetterQueue: true
+      compliance:
+        enabled: true
+        standards: ["SOC2", "ISO27001", "GDPR"]
+        dataRetention: 2555
+        encryption:
+          atRest: true
+          inTransit: true
+          algorithm: "AES-256-GCM"
+      monitoring:
+        healthChecks: true
+        metrics: true
+        tracing: true
+        profiling: false
+
+  # Core TrojanHorse Configuration
+  trojanhorse.yaml: |
+    sources:
+      - urlhaus
+      - alienvault
+      - abuseipdb
+      - virustotal
+      - crowdsec
+    strategy: balanced
+    security:
+      enforceHttps: true
+      autoLock: true
+      lockTimeout: 300000
+      auditLogging: true
+      certificatePinning: true
+      minTlsVersion: "1.3"
+    caching:
+      enabled: true
+      ttl: 3600000
+      maxSize: 10000
+    rateLimit:
+      enabled: true
+      maxConcurrent: 25
+      timeout: 30000
+
+  # Worker Configuration
+  worker.yaml: |
+    worker:
+      type: threat-analysis
+      concurrency: 10
+      timeout: 30000
+      retries: 3
+      healthCheck:
+        enabled: true
+        interval: 15000
+      metrics:
+        enabled: true
+        endpoint: /metrics
+
+  # Logging Configuration
+  logging.yaml: |
+    level: info
+    format: json
+    outputs:
+      - type: console
+        level: info
+      - type: file
+        level: debug
+        filename: /app/logs/trojanhorse.log
+        maxSize: 100MB
+        maxFiles: 10
+        compress: true
+      - type: elasticsearch
+        level: warn
+        endpoint: https://elasticsearch.company.com:9200
+        index: trojanhorse-logs
+    audit:
+      enabled: true
+      level: info
+      outputs:
+        - type: file
+          filename: /app/logs/audit.log
+        - type: database
+          table: audit_logs
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trojanhorse-nginx-config
+  namespace: trojanhorse-enterprise
+  labels:
+    app: trojanhorse
+    component: nginx
+data:
+  nginx.conf: |
+    upstream trojanhorse_api {
+        least_conn;
+        server trojanhorse-api:3000 max_fails=3 fail_timeout=30s;
+    }
+    
+    upstream trojanhorse_dashboard {
+        least_conn;
+        server trojanhorse-dashboard:8080 max_fails=3 fail_timeout=30s;
+    }
+    
+    # Rate limiting
+    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+    limit_req_zone $binary_remote_addr zone=dashboard:10m rate=5r/s;
+    
+    server {
+        listen 80;
+        server_name api.trojanhorse.enterprise.com;
+        
+        # Security headers
+        add_header X-Frame-Options DENY always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        
+        # Rate limiting
+        limit_req zone=api burst=20 nodelay;
+        
+        location / {
+            proxy_pass http://trojanhorse_api;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            
+            # WebSocket support
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+        
+        location /health {
+            access_log off;
+            proxy_pass http://trojanhorse_api/api/health;
+        }
+    }
+    
+    server {
+        listen 8080;
+        server_name dashboard.trojanhorse.enterprise.com;
+        
+        limit_req zone=dashboard burst=10 nodelay;
+        
+        location / {
+            proxy_pass http://trojanhorse_dashboard;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    } 

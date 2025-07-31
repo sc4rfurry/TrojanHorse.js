@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrojanHorse.js - CDN Usage Example</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .app {
+            max-width: 600px;
+            width: 100%;
+            margin: 20px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #f1f5f9;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #cbd5e1;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+        
+        .btn {
+            background: #8B4513;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background: #A0522D;
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .result.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .result.warning {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        
+        .result.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .status-card {
+            background: #334155;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .code-block code {
+            color: #e2e8f0;
+        }
+        
+        .highlight {
+            color: #fbbf24;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #475569;
+            border-radius: 50%;
+            border-top: 2px solid #8B4513;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <h1>🏰 TrojanHorse.js</h1>
+            <p>Advanced threat intelligence for modern web</p>
+        </div>
+        
+        <div class="content">
+            <div class="status-card" id="status">
+                <div class="status-icon">⚡</div>
+                <div>Loading threat intelligence...</div>
+            </div>
+            
+            <div class="section">
+                <h2>🔍 Threat Lookup</h2>
+                
+                <div class="input-group">
+                    <label for="threat-input">Enter Domain, IP, or URL:</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="threat-input" 
+                            placeholder="example.com, 192.168.1.1, or https://example.com"
+                            onkeypress="if(event.key==='Enter') checkThreat()"
+                        />
+                    </div>
+                    <button class="btn" onclick="checkThreat()" id="check-btn" disabled>
+                        Check for Threats
+                    </button>
+                    <div id="threat-result" class="result"></div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Live Statistics</h2>
+                <div id="stats" class="code-block">
+                    <code>Loading statistics...</code>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>💻 Integration Code</h2>
+                <div class="code-block">
+                    <code>
+<span class="highlight">// Include from CDN</span><br/>
+&lt;script src="https://cdn.jsdelivr.net/npm/trojanhorse-js@latest/dist/trojanhorse.browser.min.js"&gt;&lt;/script&gt;<br/><br/>
+
+<span class="highlight">// Basic usage</span><br/>
+const lookup = TrojanHorse.createLookup();<br/>
+const isSafe = await lookup.checkDomain('example.com');<br/><br/>
+
+<span class="highlight">// Advanced configuration</span><br/>
+const trojan = await TrojanHorse.create({<br/>
+&nbsp;&nbsp;feeds: ['urlhaus', 'alienvault'],<br/>
+&nbsp;&nbsp;storage: { dbName: 'my-threat-cache' }<br/>
+});
+                    </code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CDN Include - Replace with actual CDN URL when published -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/trojanhorse-js@latest/dist/trojanhorse.browser.min.js"></script> -->
+    
+    <!-- Local development -->
+    <script src="../../dist/trojanhorse.browser.js"></script>
+    
+    <script>
+        let threatLookup = null;
+        let stats = {
+            checksPerformed: 0,
+            threatsDetected: 0,
+            uptime: Date.now()
+        };
+        
+        async function initializeApp() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                // Check browser compatibility
+                const support = TrojanHorse.BrowserUtils.checkBrowserSupport();
+                
+                if (!support.supported) {
+                    updateStatus('❌', `Unsupported browser: ${support.missing.join(', ')}`, 'error');
+                    return;
+                }
+                
+                // Show warnings if any
+                if (support.warnings.length > 0) {
+                    updateStatus('⚠️', `Warnings: ${support.warnings.join(', ')}`, 'warning');
+                } else {
+                    updateStatus('✅', 'Browser fully supported', 'success');
+                }
+                
+                // Initialize threat lookup
+                threatLookup = TrojanHorse.createLookup();
+                
+                // Enable controls
+                document.getElementById('check-btn').disabled = false;
+                
+                // Start statistics updates
+                setInterval(updateStats, 1000);
+                updateStats();
+                
+                console.log('TrojanHorse.js initialized successfully');
+                
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                updateStatus('❌', `Failed to initialize: ${error.message}`, 'error');
+            }
+        }
+        
+        function updateStatus(icon, message, type = '') {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = `
+                <div class="status-icon">${icon}</div>
+                <div>${message}</div>
+            `;
+            
+            if (type) {
+                statusEl.className = `status-card ${type}`;
+            }
+        }
+        
+        async function checkThreat() {
+            const input = document.getElementById('threat-input');
+            const result = document.getElementById('threat-result');
+            const btn = document.getElementById('check-btn');
+            
+            const value = input.value.trim();
+            if (!value) {
+                showResult(result, '⚠️ Please enter a domain, IP, or URL', 'warning');
+                return;
+            }
+            
+            // Show loading state
+            btn.innerHTML = '<span class="loading"></span>Checking...';
+            btn.disabled = true;
+            
+            try {
+                let isMalicious = false;
+                let type = detectInputType(value);
+                
+                // Perform the appropriate check
+                switch (type) {
+                    case 'domain':
+                        isMalicious = await threatLookup.checkDomain(value);
+                        break;
+                    case 'ip':
+                        isMalicious = await threatLookup.checkIP(value);
+                        break;
+                    case 'url':
+                        isMalicious = await threatLookup.checkURL(value);
+                        break;
+                    default:
+                        throw new Error('Unable to determine input type');
+                }
+                
+                // Update statistics
+                stats.checksPerformed++;
+                if (isMalicious) {
+                    stats.threatsDetected++;
+                }
+                
+                // Show result
+                if (isMalicious) {
+                    showResult(result, `🚨 THREAT DETECTED: ${value} appears to be malicious!`, 'error');
+                } else {
+                    showResult(result, `✅ SAFE: ${value} appears to be clean`, 'success');
+                }
+                
+            } catch (error) {
+                console.error('Threat check failed:', error);
+                showResult(result, `❌ Error: ${error.message}`, 'error');
+            }
+            
+            // Reset button
+            btn.innerHTML = 'Check for Threats';
+            btn.disabled = false;
+        }
+        
+        function detectInputType(value) {
+            // URL detection
+            if (value.startsWith('http://') || value.startsWith('https://')) {
+                return 'url';
+            }
+            
+            // IP detection (simple regex)
+            if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(value)) {
+                return 'ip';
+            }
+            
+            // Default to domain
+            return 'domain';
+        }
+        
+        function showResult(element, message, type) {
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 10000);
+        }
+        
+        function updateStats() {
+            const statsEl = document.getElementById('stats');
+            const uptime = Math.floor((Date.now() - stats.uptime) / 1000);
+            
+            statsEl.innerHTML = `<code>
+📊 Session Statistics:<br/>
+• Checks performed: ${stats.checksPerformed}<br/>
+• Threats detected: ${stats.threatsDetected}<br/>
+• Detection rate: ${stats.checksPerformed ? Math.round((stats.threatsDetected / stats.checksPerformed) * 100) : 0}%<br/>
+• Uptime: ${uptime}s<br/>
+• Status: ${threatLookup ? '🟢 Active' : '🔴 Inactive'}
+            </code>`;
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        
+        // Handle page visibility for statistics
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                updateStats();
+            }
+        });
+    </script>
+</body>
+</html> 

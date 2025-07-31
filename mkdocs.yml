@@ -1,0 +1,117 @@
+site_name: TrojanHorse.js Documentation
+site_description: 'Enterprise-grade threat intelligence library for JavaScript'
+site_author: 'sc4rfurry'
+site_url: 'https://trojanhorse-js.readthedocs.io'
+
+repo_name: 'TrojanHorse.js'
+repo_url: 'https://github.com/sc4rfurry/TrojanHorse.js'
+edit_uri: 'edit/main/docs/'
+
+copyright: 'Copyright &copy; 2025 TrojanHorse.js'
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: red
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: red
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.annotate
+    - content.code.copy
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Basic Concepts: getting-started/concepts.md
+  - User Guide:
+    - Configuration: user-guide/configuration.md
+    - Threat Detection: user-guide/threat-detection.md
+    - Vault Management: user-guide/vault-management.md
+    - Event System: user-guide/events.md
+  - API Reference:
+    - Core API: api/core.md
+    - Security: api/security.md
+    - Feeds: api/feeds.md
+    - Analytics: api/analytics.md
+    - Integrations: api/integrations.md
+  - Enterprise:
+    - Enterprise Features: enterprise/features.md
+    - Authentication: enterprise/authentication.md
+    - SIEM Integration: enterprise/siem.md
+    - Monitoring: enterprise/monitoring.md
+  - Deployment:
+    - Production: deployment/production.md
+    - Docker: deployment/docker.md
+    - Kubernetes: deployment/kubernetes.md
+    - Browser Usage: deployment/browser.md
+  - Examples:
+    - Basic Usage: examples/basic.md
+    - Advanced Scenarios: examples/advanced.md
+    - Custom Feeds: examples/custom-feeds.md
+    - Enterprise Setup: examples/enterprise.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Architecture: development/architecture.md
+    - Testing: development/testing.md
+  - Security:
+    - Security Overview: security/overview.md
+    - Best Practices: security/best-practices.md
+    - Vulnerability Reporting: security/reporting.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/sc4rfurry/TrojanHorse.js
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/trojanhorse_js
+  version:
+    provider: sc4rfurry
+    default: stable
+
+extra_css:
+  - stylesheets/extra.css 
